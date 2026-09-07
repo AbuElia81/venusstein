@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Venusstein</title>
+<style>
+  :root {
+    --bg: #12101a;
+    --fg: #efe8dd;
+    --muted: #a99bb4;
+    --accent: #d8b26a;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    background:
+      radial-gradient(120% 90% at 50% 0%, #241d33 0%, var(--bg) 60%);
+    color: var(--fg);
+    font-family: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+    text-align: center;
+  }
+  main { max-width: 34rem; }
+  h1 {
+    margin: 0 0 .6rem;
+    font-size: clamp(2.4rem, 9vw, 4rem);
+    font-weight: 500;
+    letter-spacing: .06em;
+    color: var(--accent);
+  }
+  .rule {
+    width: 6rem;
+    height: 1px;
+    margin: 1.4rem auto;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  p {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+  <main>
+    <h1>Venusstein</h1>
+    <div class="rule"></div>
+    <p>Dieses Projekt entsteht gerade.</p>
+  </main>
+</body>
+</html>
