@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lapidarium — Venusstein</title>
+<meta name="description" content="Die Steine der sieben Planeten nach Agrippa von Nettesheim, mit mineralogischer Bestimmung und Angaben zum Bezug.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css?v=4">
+<style>
+  .planet-block { border-top:2px solid; padding-top:1.2rem; margin-top:3rem; }
+  .planet-kopf { display:flex; align-items:baseline; gap:.85rem; flex-wrap:wrap; margin-bottom:.5rem; }
+  .planet-kopf .g { font-size:2.4rem; line-height:1;
+    font-family:'Apple Symbols','Segoe UI Symbol','DejaVu Sans',serif; }
+  .planet-kopf h2 { letter-spacing:.1em; }
+  .planet-meta { font-size:.9rem; color:var(--tinte-blass); }
+  .stein-gitter { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(14rem,1fr)); margin-top:1.2rem; }
+  .stein { border:1px solid var(--pergament-rand); border-radius:2px; padding:.9rem 1rem; background:rgba(255,253,247,.6); }
+  .stein h3 { font-family:var(--caps); font-size:.92rem; letter-spacing:.08em; margin:0 0 .2rem; }
+  .stein .lat { font-style:italic; font-size:.86rem; color:var(--tinte-blass); }
+  .stein dl { margin:.6rem 0 0; font-size:.86rem; display:grid; grid-template-columns:auto 1fr; gap:.15rem .6rem; }
+  .stein dt { color:var(--tinte-blass); }
+  .stein dd { margin:0; }
+  .stein .anm { font-size:.85rem; margin:.6rem 0 0; color:var(--tinte-blass); }
+  .krone { color:var(--gold); }
+  .inhalt { display:flex; gap:.9rem; flex-wrap:wrap; margin:1.4rem 0 0; }
+  .inhalt a {
+    font-family:var(--caps); font-size:.7rem; letter-spacing:.15em; text-transform:uppercase;
+    text-decoration:none; border:1px solid var(--pergament-rand); border-radius:2px;
+    padding:.4rem .85rem; color:var(--tinte-blass);
+  }
+  .inhalt a:hover { border-color:var(--rubrik); color:var(--rubrik); }
+</style>
+</head>
+<body>
+<script src="kopf.js?v=4"></script>
+
+<main>
+  <section class="bahn">
+    <p class="klein-kapital">Lapidarium</p>
+    <h1>Die Steine der sieben Planeten</h1>
+    <div style="max-width:44rem">
+      <p class="initiale">Agrippa von Nettesheim zählt in den <em>Drei Büchern über die
+      verborgene Philosophie</em> (1533) für jeden Planeten auf, was ihm auf Erden
+      zugehört: Elemente, Säfte, Metalle, Steine, Pflanzen, Tiere. Die Steinlisten
+      der Kapitel XXIII bis XXIX stehen unten vollständig — in seiner Reihenfolge,
+      mit seinen Namen.</p>
+      <p>Was er meinte, ist nicht immer, was wir heute so nennen. Der mittelalterliche
+      <em>saphirus</em> war oft Lapislazuli, der <em>topazius</em> oft Chrysolith. Wo
+      sich eine Bestimmung sicher treffen lässt, steht sie dabei; wo nicht, ist das
+      vermerkt. Dazu jeweils, woher man den Stein heute bekommt und was er ungefähr
+      kostet.</p>
+    </div>
+    <div class="inhalt" id="inhalt"></div>
+  </section>
+
+  <section class="bahn" style="padding-top:0">
+    <figure>
+      <img src="bilder/chrysolith-sonne.jpg" alt="Ein olivgrüner Chrysolith wird gegen die Sonne gehalten, ein goldener Strahlenstern bricht aus seiner Mitte" loading="lazy">
+      <figcaption>„Der Chrysolith ist von hellgrüner Farbe, in dem, wenn man ihn gegen
+      die Sonne hält, ein goldener Stern hervorleuchtet." — Agrippa I, XXIII.</figcaption>
+    </figure>
+  </section>
+
+  <section class="bahn" style="padding-top:0"><div id="lapidarium"></div></section>
+</main>
+
+<script src="steine.js?v=4"></script>
+<script>
+(function () {
+  var FARBE = { Saturn:'--sat', Jupiter:'--jup', Mars:'--mar', Sonne:'--sol',
+                Venus:'--ven', Merkur:'--mer', Mond:'--lun' };
+  var reihe = ['Saturn','Jupiter','Mars','Sonne','Venus','Merkur','Mond'];
+  var wurzel = getComputedStyle(document.documentElement);
+  function farbe(p) { return wurzel.getPropertyValue(FARBE[p]).trim(); }
+  function id(p) { return p.toLowerCase().replace(/[^a-z]/g, ''); }
+
+  document.getElementById('inhalt').innerHTML = reihe.map(function (p) {
+    return '<a href="#' + id(p) + '" style="color:' + farbe(p) + '">' +
+      Steine.LAPIDARIUM[p].glyph + ' ' + p + '</a>';
+  }).join('');
+
+  document.getElementById('lapidarium').innerHTML = reihe.map(function (p) {
+    var l = Steine.LAPIDARIUM[p], f = farbe(p);
+    var karten = l.steine.map(function (s) {
+      var zeilen = [['Bestimmung', s.modern], ['Bezug', s.bezug], ['Preis', s.preis]];
+      if (s.form) zeilen.push(['Form', s.form]);
+      return '<div class="stein"><h3>' +
+        (s.haupt ? '<span class="krone" title="Hauptstein">✦</span> ' : '') + s.name + '</h3>' +
+        (s.lat && s.lat !== '—' ? '<div class="lat">bei Agrippa: ' + s.lat + '</div>' : '') +
+        '<dl>' + zeilen.map(function (z) { return '<dt>' + z[0] + '</dt><dd>' + z[1] + '</dd>'; }).join('') +
+        '</dl>' + (s.hinweis ? '<p class="anm">' + s.hinweis + '</p>' : '') + '</div>';
+    }).join('');
+    return '<div class="planet-block" id="' + id(p) + '" style="border-color:' + f + '">' +
+      '<div class="planet-kopf"><span class="g" style="color:' + f + '">' + l.glyph + '</span>' +
+      '<h2 style="color:' + f + '">' + p + '</h2>' +
+      '<span class="planet-meta">' + l.wesen + ' · Metall: ' + l.metall + '</span></div>' +
+      '<p style="max-width:44rem">' + l.mangel + '</p>' +
+      '<p class="hinweis" style="max-width:46rem">' + l.quelle + '</p>' +
+      '<div class="stein-gitter">' + karten + '</div></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>

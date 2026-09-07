@@ -1,0 +1,181 @@
+/* ============================================================
+   VENUSSTEIN — gemeinsames Stilblatt
+   Pergament, Rubrik, Gold: der Blick eines mittelalterlichen
+   Lapidariums, aber mit heutiger Lesbarkeit.
+   ============================================================ */
+
+:root {
+  --pergament:      #f3ead6;
+  --pergament-tief: #e7d9bb;
+  --pergament-rand: #d9c8a4;
+  --tinte:          #2b2117;
+  --tinte-blass:    #6d5e47;
+  --rubrik:         #8f2c21;
+  --gold:           #a8801f;
+  --gold-hell:      #c9a441;
+  --linie:          rgba(43, 33, 23, .16);
+
+  --sat: #6f7d5c;  --jup: #5a6bb0;  --mar: #b03f30;  --sol: #c08c15;
+  --ven: #4f9160;  --mer: #7a5aa8;  --lun: #7c8ea3;
+
+  --serif: 'Cormorant Garamond', 'Iowan Old Style', Palatino, Georgia, serif;
+  --caps:  'Cinzel', 'Trajan Pro', Palatino, Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.02rem, .55vw + .92rem, 1.18rem);
+  line-height: 1.68;
+  color: var(--tinte);
+  background-color: var(--pergament);
+  background-image:
+    radial-gradient(70% 55% at 15% 0%,   rgba(255,252,244,.85), transparent 60%),
+    radial-gradient(60% 50% at 88% 12%,  rgba(214,193,153,.40), transparent 65%),
+    radial-gradient(75% 60% at 50% 105%, rgba(198,175,133,.42), transparent 70%);
+  background-attachment: fixed;
+}
+
+/* Feine Faserung des Pergaments */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  opacity: .38; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'>\
+<filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/>\
+<feColorMatrix type='saturate' values='0'/></filter>\
+<rect width='220' height='220' filter='url(%23f)' opacity='.5'/></svg>");
+}
+body > * { position: relative; z-index: 1; }
+
+/* ---------- Schrift ---------- */
+h1, h2, h3, h4 { font-family: var(--caps); font-weight: 600; line-height: 1.18; margin: 0; }
+h1 { font-size: clamp(2rem, 5.2vw, 3.3rem); letter-spacing: .04em; }
+h2 { font-size: clamp(1.35rem, 2.8vw, 1.95rem); letter-spacing: .05em; color: var(--rubrik); }
+h3 { font-size: clamp(1.08rem, 1.8vw, 1.3rem); letter-spacing: .07em; }
+p { margin: 0 0 1.05em; }
+a { color: var(--rubrik); text-underline-offset: .18em; text-decoration-thickness: .06em; }
+a:hover { color: var(--gold); }
+strong { font-weight: 600; }
+em { font-style: italic; }
+
+.klein-kapital {
+  font-family: var(--caps); font-size: .68rem; letter-spacing: .26em;
+  text-transform: uppercase; color: var(--tinte-blass);
+}
+
+/* Initiale nach Art der Handschriften */
+.initiale::first-letter {
+  float: left; font-family: var(--caps); font-size: 3.5em; line-height: .82;
+  margin: .06em .12em -.04em 0; color: var(--rubrik);
+  text-shadow: 1px 1px 0 rgba(168,128,31,.35);
+}
+
+/* ---------- Gerüst ---------- */
+.bahn { max-width: 62rem; margin: 0 auto; padding: 0 clamp(1.1rem, 4vw, 2.5rem); }
+.bahn-eng { max-width: 44rem; }
+section { padding: clamp(2.6rem, 6vw, 4.6rem) 0; }
+
+/* ---------- Kopf und Fuß ---------- */
+.kopf {
+  border-bottom: 1px solid var(--linie);
+  background: rgba(247, 240, 226, .82);
+  backdrop-filter: blur(6px);
+  position: sticky; top: 0; z-index: 20;
+}
+.kopf-innen {
+  display: flex; align-items: baseline; gap: 1.6rem; flex-wrap: wrap;
+  padding-block: .85rem;
+}
+.marke {
+  font-family: var(--caps); font-size: 1.12rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--tinte); text-decoration: none; margin-right: auto;
+}
+.marke:hover { color: var(--rubrik); }
+.kopf nav { display: flex; gap: 1.4rem; flex-wrap: wrap; }
+.kopf nav a {
+  font-family: var(--caps); font-size: .72rem; letter-spacing: .17em;
+  text-transform: uppercase; text-decoration: none; color: var(--tinte-blass);
+  padding-bottom: .2rem; border-bottom: 1px solid transparent;
+}
+.kopf nav a:hover, .kopf nav a[aria-current] { color: var(--rubrik); border-color: var(--rubrik); }
+
+.fuss {
+  border-top: 1px solid var(--linie); margin-top: 3rem;
+  padding: 2.4rem 0 3rem; font-size: .9rem; color: var(--tinte-blass);
+}
+.fuss a { color: var(--tinte-blass); }
+
+/* ---------- Zierrat ---------- */
+.zierlinie { display: block; width: 100%; height: 22px; margin: 2rem 0; opacity: .55; }
+.regel { border: 0; border-top: 1px solid var(--linie); margin: 2.4rem 0; }
+
+/* ---------- Karten und Tafeln ---------- */
+.tafel {
+  background: linear-gradient(#fdf8ec, #f4ebd7);
+  border: 1px solid var(--pergament-rand);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 10px 26px -20px rgba(43,33,23,.6);
+  padding: clamp(1.2rem, 3vw, 2rem);
+}
+
+/* ---------- Formular ---------- */
+.feldgruppe { display: grid; gap: 1.05rem 1.3rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.feld { display: flex; flex-direction: column; gap: .35rem; }
+.feld.voll { grid-column: 1 / -1; }
+label {
+  font-family: var(--caps); font-size: .66rem; letter-spacing: .19em;
+  text-transform: uppercase; color: var(--tinte-blass);
+}
+input, select {
+  font-family: var(--serif); font-size: 1.02rem; color: var(--tinte);
+  background: rgba(255,253,247,.9);
+  border: 1px solid var(--pergament-rand); border-radius: 2px;
+  padding: .58rem .7rem; width: 100%;
+}
+input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: var(--gold); }
+.hinweis { font-size: .86rem; color: var(--tinte-blass); font-style: italic; }
+
+.knopf {
+  font-family: var(--caps); font-size: .78rem; letter-spacing: .19em; text-transform: uppercase;
+  color: var(--pergament); background: var(--rubrik);
+  border: 1px solid #71231a; border-radius: 2px;
+  padding: .82rem 1.9rem; cursor: pointer; transition: background .18s, transform .18s;
+}
+.knopf:hover { background: #a3352a; }
+.knopf:active { transform: translateY(1px); }
+.knopf.leise { background: transparent; color: var(--tinte-blass); border-color: var(--pergament-rand); }
+.knopf.leise:hover { color: var(--rubrik); border-color: var(--rubrik); }
+
+/* ---------- Bilder ---------- */
+figure { margin: 0; }
+figure img {
+  display: block; width: 100%; height: auto; border-radius: 2px;
+  border: 1px solid var(--pergament-rand);
+  box-shadow: 0 14px 34px -22px rgba(43,33,23,.75);
+}
+figcaption { font-size: .84rem; color: var(--tinte-blass); font-style: italic; margin-top: .55rem; }
+
+/* ---------- Tabellen ---------- */
+.tabellenrahmen { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--linie); vertical-align: top; }
+th {
+  font-family: var(--caps); font-size: .64rem; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--tinte-blass); font-weight: 600;
+  border-bottom: 1px solid var(--pergament-rand);
+}
+td.zahl { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.plus  { color: #3f6b45; font-weight: 600; }
+.minus { color: var(--rubrik); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* display-Regeln duerfen das hidden-Attribut nicht aushebeln */
+[hidden] { display: none !important; }

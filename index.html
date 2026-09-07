@@ -3,54 +3,92 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Venusstein</title>
-<style>
-  :root {
-    --bg: #12101a;
-    --fg: #efe8dd;
-    --muted: #a99bb4;
-    --accent: #d8b26a;
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body {
-    margin: 0;
-    display: grid;
-    place-items: center;
-    padding: 2rem;
-    background:
-      radial-gradient(120% 90% at 50% 0%, #241d33 0%, var(--bg) 60%);
-    color: var(--fg);
-    font-family: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
-    text-align: center;
-  }
-  main { max-width: 34rem; }
-  h1 {
-    margin: 0 0 .6rem;
-    font-size: clamp(2.4rem, 9vw, 4rem);
-    font-weight: 500;
-    letter-spacing: .06em;
-    color: var(--accent);
-  }
-  .rule {
-    width: 6rem;
-    height: 1px;
-    margin: 1.4rem auto;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  }
-  p {
-    margin: 0;
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: var(--muted);
-  }
-</style>
+<title>Venusstein — ein astrologisches Lapidarium</title>
+<meta name="description" content="Berechne dein Geburtshoroskop nach traditioneller Methode und erfahre, welche Steine den geschwächten Planeten zugeordnet sind.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css?v=4">
 </head>
 <body>
-  <main>
-    <h1>Venusstein</h1>
-    <div class="rule"></div>
-    <p>Dieses Projekt entsteht gerade.</p>
-  </main>
+<script src="kopf.js?v=4"></script>
+
+<main>
+  <section class="bahn" style="padding-top:clamp(2rem,5vw,3.4rem)">
+    <p class="klein-kapital" style="margin-bottom:.9rem">Steine, Sterne und ihre Zuordnung</p>
+    <h1 style="max-width:16ch">Welcher Stein fehlt&nbsp;dir?</h1>
+    <svg class="zierlinie" viewBox="0 0 600 22" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 11h250M350 11h250" stroke="#a8801f" stroke-width="1" fill="none"/>
+      <path d="M280 11l20-8 20 8-20 8z" fill="#8f2c21"/>
+      <circle cx="266" cy="11" r="2.5" fill="#a8801f"/><circle cx="334" cy="11" r="2.5" fill="#a8801f"/>
+    </svg>
+    <div style="max-width:44rem">
+      <p class="initiale">Die mittelalterlichen Lapidarien lesen den Stein als
+      geronnenes Licht eines Planeten. Was am Himmel als Kraft umläuft, liegt in der
+      Erde als Farbe und Härte fest. Wo ein Planet im Geburtshoroskop schwach steht,
+      so die Lehre, kann sein Stein nachreichen, was ihm fehlt.</p>
+      <p>Venusstein rechnet dein Horoskop nach der überlieferten Methode durch: alle
+      sieben sichtbaren Planeten, ihre Häuser, ihre wesentlichen und zufälligen
+      Würden. Am Ende steht eine Rangfolge — und zu den schwächsten Planeten die
+      Steine, die ihnen seit Jahrhunderten zugeordnet werden.</p>
+    </div>
+    <p style="margin-top:2rem">
+      <a class="knopf" href="rechner.html" style="text-decoration:none;display:inline-block">Horoskop berechnen</a>
+    </p>
+  </section>
+
+  <section class="bahn">
+    <figure>
+      <img src="bilder/lapidarium-hero.jpg" alt="Sieben rohe Edelsteine auf der Seite einer mittelalterlichen Handschrift, von Kerzenlicht beleuchtet" loading="lazy">
+      <figcaption>Die sieben Steine der Planeten: Onyx, Saphir, Blutstein, Chrysolith,
+      Smaragd, Achat und Selenit.</figcaption>
+    </figure>
+  </section>
+
+  <section class="bahn">
+    <h2>Drei Schritte</h2>
+    <div style="display:grid;gap:1.4rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));margin-top:1.6rem">
+      <div class="tafel">
+        <p class="klein-kapital">Erstens</p>
+        <h3 style="margin:.3rem 0 .6rem">Das Horoskop</h3>
+        <p style="margin:0;font-size:.97rem">Aus Geburtsdatum, Uhrzeit und Ort werden
+        die Stände der sieben Planeten berechnet, dazu Aszendent und Medium Coeli.</p>
+      </div>
+      <div class="tafel">
+        <p class="klein-kapital">Zweitens</p>
+        <h3 style="margin:.3rem 0 .6rem">Die Würden</h3>
+        <p style="margin:0;font-size:.97rem">Jeder Planet wird nach Lillys Tafel
+        bewertet — Domizil, Erhöhung, Triplizität, Terminus, Gesicht, dazu Haus,
+        Lauf und Stellung zur Sonne.</p>
+      </div>
+      <div class="tafel">
+        <p class="klein-kapital">Drittens</p>
+        <h3 style="margin:.3rem 0 .6rem">Die Steine</h3>
+        <p style="margin:0;font-size:.97rem">Zu den drei schwächsten Planeten nennt
+        das Lapidarium die überlieferten Steine — mit Hinweis, woher man sie bekommt.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bahn">
+    <div style="display:grid;gap:2rem;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));align-items:center">
+      <figure>
+        <img src="bilder/smaragd-venus.jpg" alt="Roher Smaragdkristall auf Schiefer, von hinten durchleuchtet" loading="lazy">
+        <figcaption>Smaragd — der Stein der Venus.</figcaption>
+      </figure>
+      <div>
+        <h2>Warum Venusstein</h2>
+        <p>Der Smaragd ist bei Agrippa der Stein der Venus, und die Venus ist der
+        Planet der Verbindung: dessen, was zusammenkommt und zusammenhält. Ein
+        Lapidarium ist selbst eine solche Verbindung — zwischen dem, was oben umläuft,
+        und dem, was unten liegt.</p>
+        <p>Die Seite behauptet nicht, dass Steine wirken. Sie gibt wieder, was die
+        Überlieferung sagt, und rechnet den astrologischen Teil so genau, wie es
+        ohne Ephemeridenwerk möglich ist.</p>
+        <p><a href="lapidarium.html">Alle vierzig Steine ansehen →</a></p>
+      </div>
+    </div>
+  </section>
+</main>
 </body>
 </html>

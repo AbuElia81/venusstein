@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methode und Quellen — Venusstein</title>
+<meta name="description" content="Welche Ephemeride, welche Häuser, welche Würdentafel — und wo die Grenzen der Rechnung liegen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css?v=4">
+<style>
+  .bahn-eng h2 { margin-top:2.6rem; }
+  .bahn-eng h3 { margin-top:1.8rem; margin-bottom:.4rem; }
+  .quelle { border-left:2px solid var(--gold); padding-left:1rem; margin:1.2rem 0; font-size:.95rem; }
+  .quelle cite { font-style:normal; display:block; font-family:var(--caps);
+    font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--tinte-blass); margin-top:.4rem; }
+</style>
+</head>
+<body>
+<script src="kopf.js?v=4"></script>
+
+<main>
+  <section class="bahn bahn-eng">
+    <p class="klein-kapital">Methode</p>
+    <h1>Wie hier gerechnet wird</h1>
+    <p class="initiale">Astrologische Rechner geben selten preis, welchem System sie
+    folgen. Da die Systeme aber zu verschiedenen Ergebnissen führen, steht hier
+    offen, was gewählt wurde und warum — und wo die Rechnung an ihre Grenzen kommt.</p>
+
+    <h2>Die Ephemeride</h2>
+    <p>Die Stände der sieben sichtbaren Planeten werden im Browser selbst gerechnet,
+    ohne Anfrage an einen Dienst. Für Merkur bis Saturn dienen die Kepler-Elemente
+    der JPL-Näherung für die Jahre 1800 bis 2050; sie werden heliozentrisch
+    ausgewertet, geozentrisch umgesetzt und auf das Äquinoktium des Datums
+    präzediert. Der Mond folgt der gekürzten ELP-Reihe nach Jean Meeus.</p>
+    <p>Geprüft wurde gegen bekannte Himmelsereignisse: Die Sonne stimmt über die
+    Jahre 1900 bis 2060 auf acht Bogensekunden mit der klassischen Reihe überein.
+    Bei fünf Finsternissen zwischen 2017 und 2025 liegt die berechnete Konjunktion
+    oder Opposition von Sonne und Mond um höchstens 0,07 Grad daneben. Die Eintritte
+    Saturns in den Widder und Jupiters in den Krebs im Jahr 2025 werden auf ein
+    Zehntelgrad getroffen, und alle zwölf geprüften Rückläufigkeitsphasen stimmen.</p>
+    <p>Für die Zwecke dieser Seite ist das reichlich genau: Zeichen sind dreißig Grad
+    breit, Termini sechs bis acht, Gesichter zehn. Wer eine Position auf die
+    Bogensekunde braucht, nimmt ein Ephemeridenwerk.</p>
+
+    <h2>Zeit und Ort</h2>
+    <p>Der Versatz zur Weltzeit wird nicht geschätzt, sondern für den Geburtstag aus
+    der Zeitzonendatenbank des Browsers gelesen. Damit sind auch alte Regelungen
+    richtig erfasst — etwa dass in Deutschland zwischen 1950 und 1980 keine
+    Sommerzeit galt, 1943 dagegen schon.</p>
+    <p>Ist die Geburtszeit unbekannt, verschiebt sich vor allem der Aszendent: Er
+    wandert in vier Minuten um ein Grad. Die Zeichenstände der langsamen Planeten
+    bleiben davon nahezu unberührt, die Häuser jedoch nicht.</p>
+
+    <h2>Die Häuser</h2>
+    <p>Gerechnet wird mit <strong>Ganzzeichenhäusern</strong>: Das Zeichen des
+    Aszendenten ist das erste Haus, das folgende das zweite, und so fort. Das ist
+    die älteste bezeugte Hausteilung, sie kommt ohne Rechenkunststücke aus und
+    versagt auch in hohen Breiten nicht.</p>
+    <p>Das Medium Coeli wird gesondert berechnet und eingezeichnet. Bei
+    Ganzzeichenhäusern fällt es nicht notwendig auf die Spitze des zehnten Hauses —
+    das ist kein Fehler, sondern Eigenart des Systems.</p>
+
+    <h2>Die Würden</h2>
+    <p>Grundlage ist die Tafel <em>To examine the Strength and Debility of each
+    Planet</em> aus William Lillys <em>Christian Astrology</em> (London 1647,
+    S. 115). Zwei Stücke daraus wurden bewusst ersetzt, und zwar durchgängig:</p>
+    <div class="tabellenrahmen">
+      <table>
+        <thead><tr><th>Stück</th><th>Bei Lilly</th><th>Hier</th></tr></thead>
+        <tbody>
+          <tr><td>Termini</td><td>ptolemäische Tafel</td><td><strong>ägyptische Tafel</strong></td></tr>
+          <tr><td>Häuser</td><td>Regiomontanus</td><td><strong>Ganzzeichenhäuser</strong></td></tr>
+          <tr><td>Triplizitäten</td><td>ptolemäisch, zwei Herrscher</td><td>unverändert ptolemäisch</td></tr>
+          <tr><td>Punktwerte</td><td>5 · 4 · 3 · 2 · 1</td><td>unverändert</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Wesentliche Würden</h3>
+    <p>Domizil +5, Erhöhung +4, Triplizität +3, Terminus +2, Gesicht +1; Exil −5,
+    Fall −4, Peregrin −5. <strong>Peregrin</strong> wird nur angesetzt, wenn ein
+    Planet weder eine Würde noch Exil oder Fall hat — sonst würde dieselbe Lage
+    zweimal bestraft. Andere Rechner handhaben das anders.</p>
+
+    <h3>Zufällige Würden</h3>
+    <p>Haus 1 und 10 +5, Haus 7, 4, 11 +4, Haus 2 und 5 +3, Haus 9 +2, Haus 3 +1,
+    Haus 6 und 8 −4, Haus 12 −5. Direktläufig +4, rückläufig −5. Schnell +2,
+    langsam −2. Cazimi +5, verbrannt −5, unter den Sonnenstrahlen −4, frei von der
+    Sonne +5. Saturn, Jupiter und Mars orientalisch +2 und okzidentalisch −2, bei
+    Merkur und Venus umgekehrt. Der zunehmende Mond +2, der abnehmende −2. Partile
+    Konjunktion mit Jupiter oder Venus +5, mit Saturn oder Mars −5, mit dem
+    Drachenkopf +4, mit dem Drachenschwanz −4. Bei Cor Leonis +6, bei Spica +5, bei
+    Caput Algol −5. Belagerung durch Saturn und Mars −5.</p>
+    <p>Zwei Anmerkungen zur Ehrlichkeit: Sonne und Mond laufen nie rückwärts und
+    bekommen darum die +4 für Direktlauf nie — sie stehen im Vergleich also
+    systematisch etwas schlechter da. Und die <em>Belagerung</em> ist hier
+    vereinfacht gefasst als Stellung zwischen beiden Übeltätern, jeder innerhalb von
+    dreißig Grad; Lilly verlangt zusätzlich, dass kein anderer Aspekt dazwischentritt.</p>
+
+    <h3>Was die Zahl bedeutet</h3>
+    <p>Die Summe aus beiden Tafeln ergibt die Stärke eines Planeten. Die Einteilung
+    in <em>sehr stark</em> ab +10, <em>stark</em> ab +5, <em>mittel</em> ab 0,
+    <em>geschwächt</em> ab −5 und darunter <em>stark geschwächt</em> stammt nicht von
+    Lilly, sondern ist eine Lesehilfe dieser Seite.</p>
+
+    <h2>Die Steine</h2>
+    <p>Die Zuordnung folgt Agrippa, Buch I, Kapitel XXIII bis XXIX, zitiert nach der
+    englischen Übersetzung von J. F. (London 1651). Seine Listen sind nicht
+    überschneidungsfrei — der Smaragd steht unter Jupiter, Venus und Merkur zugleich,
+    der Saphir unter Saturn, Jupiter und Venus. Das ist keine Nachlässigkeit, sondern
+    Ausdruck der Lehre, dass ein Ding an mehreren Kräften teilhaben kann. Wo diese
+    Seite einen <span style="color:var(--gold)">✦ Hauptstein</span> auszeichnet, ist
+    das eine Entscheidung, keine Überlieferung.</p>
+    <p>Einige wenige Steine sind nicht von Agrippa, sondern aus der weiteren
+    Überlieferung ergänzt — Hämatit und Malachit etwa, weil Eisen und Kupfer die
+    Metalle von Mars und Venus sind. Sie sind jeweils als Ergänzung gekennzeichnet.</p>
+
+    <h2>Quellen</h2>
+    <div class="quelle">Heinrich Cornelius Agrippa von Nettesheim: <em>De occulta
+      philosophia libri tres.</em> Köln 1533. Hier nach: <em>Three Books of Occult
+      Philosophy</em>, übersetzt von J. F., London 1651, Buch I, Kap. XXIII–XXIX.
+      <cite>Steinzuordnungen der sieben Planeten</cite></div>
+    <div class="quelle">William Lilly: <em>Christian Astrology.</em> London 1647,
+      besonders S. 104–115.
+      <cite>Wesentliche und zufällige Würden</cite></div>
+    <div class="quelle">Marbod von Rennes: <em>Liber lapidum.</em> Um 1090. — Hildegard
+      von Bingen: <em>Physica</em>, Buch IV. — Alfons X. von Kastilien:
+      <em>Lapidario.</em> Um 1278.
+      <cite>Mittelalterliche Steinkunde, für Einordnung und Wirkungen</cite></div>
+    <div class="quelle">Jean Meeus: <em>Astronomical Algorithms.</em> 2. Auflage,
+      Richmond 1998. — Jet Propulsion Laboratory: <em>Keplerian Elements for
+      Approximate Positions of the Major Planets.</em>
+      <cite>Rechengrundlagen der Ephemeride</cite></div>
+
+    <h2>Was diese Seite nicht ist</h2>
+    <p>Sie gibt eine überlieferte Lehre wieder und rechnet ihren astronomischen Teil
+    sauber durch. Ob Steine wirken, ist damit nicht behauptet und nicht geprüft. Die
+    Seite ersetzt keine ärztliche Behandlung und keine Beratung in rechtlichen oder
+    finanziellen Dingen.</p>
+  </section>
+</main>
+</body>
+</html>

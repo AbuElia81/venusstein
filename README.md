@@ -1,6 +1,57 @@
 # Venusstein
 
-Statische Single-File-Seiten, veröffentlicht über GitHub Pages:
-https://abuelia81.github.io/venusstein/
+Ein astrologisches Lapidarium: Der Rechner ermittelt aus Geburtsdatum, -zeit und
+-ort die Stände der sieben sichtbaren Planeten, bewertet ihre Stärke nach
+traditioneller Methode und nennt zu den schwächsten die überlieferten Steine.
 
-Lokal ansehen: statischer Server auf Port 8918 (Eintrag `venusstein` in `~/.claude/launch.json`).
+**https://abuelia81.github.io/venusstein/**
+
+## Seiten
+
+| Datei | Inhalt |
+|---|---|
+| `index.html` | Startseite |
+| `rechner.html` | Geburtshoroskop, Radix rund und quadratisch, Würden, Steinempfehlung |
+| `lapidarium.html` | Alle 40 Steine der sieben Planeten |
+| `methode.html` | Rechenverfahren, gewählte Systeme, Quellen, Grenzen |
+
+## Rechenkern
+
+| Datei | Aufgabe |
+|---|---|
+| `astro.js` | Ephemeride: Sonne, Mond, Merkur bis Saturn; Aszendent, MC, Mondknoten |
+| `wuerden.js` | Wesentliche und zufällige Würden nach Lilly (1647) |
+| `steine.js` | Lapidarium nach Agrippa (1533), mit heutiger Bestimmung und Bezugsangaben |
+| `orte.js` | 158 Geburtsorte; Zeitzonenversatz aus der IANA-Datenbank des Browsers |
+
+Kein Build, keine Abhängigkeiten, keine Anfragen an fremde Dienste — bis auf die
+Schriften von Google Fonts. Alles rechnet im Browser.
+
+**Gewählte Systeme:** Lillys Würdentafel, aber mit ägyptischen Termini und
+Ganzzeichenhäusern. Triplizitäten bleiben ptolemäisch. Näheres in `methode.html`.
+
+## Entwicklung
+
+Lokal ansehen: statischer Server auf Port 8918 (Eintrag `venusstein` in
+`~/.claude/launch.json`).
+
+Nach Änderungen an CSS oder JS die Versionsnummer der Verweise anheben, sonst
+liefert der Browser alte Dateien aus:
+
+```bash
+./bump.sh
+```
+
+Rechenkern prüfen (JavaScriptCore ist auf macOS vorinstalliert):
+
+```bash
+/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Helpers/jsc astro.js wuerden.js pruefung.js
+```
+
+## Quellen
+
+- Agrippa von Nettesheim, *De occulta philosophia* (1533), Buch I, Kap. XXIII–XXIX —
+  Steinzuordnungen
+- William Lilly, *Christian Astrology* (1647), S. 104–115 — Würdentafeln
+- Jean Meeus, *Astronomical Algorithms* (1998); JPL, *Keplerian Elements for
+  Approximate Positions of the Major Planets* — Ephemeride

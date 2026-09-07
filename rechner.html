@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der Rechner — Venusstein</title>
+<meta name="description" content="Geburtshoroskop nach traditioneller Methode: sieben Planeten, Ganzzeichenhäuser, Würden nach Lilly — und die zugeordneten Steine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="stil.css?v=4">
+<style>
+  /* ---------- Radix ---------- */
+  .radix-huelle { display:grid; gap:1.8rem; grid-template-columns:minmax(0,1fr); align-items:start; }
+  @media (min-width:60rem){ .radix-huelle{ grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); } }
+  #radix { width:100%; height:auto; display:block; }
+  .radix-tafel { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:.9rem; }
+  .radix-tafel button {
+    font-family:var(--caps); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
+    background:transparent; border:1px solid var(--pergament-rand); color:var(--tinte-blass);
+    padding:.42rem .9rem; cursor:pointer; border-radius:2px;
+  }
+  .radix-tafel button[aria-pressed="true"]{ color:var(--pergament); background:var(--rubrik); border-color:#71231a; }
+
+  /* ---------- Rangliste ---------- */
+  .rang { display:flex; align-items:center; gap:.75rem; padding:.55rem 0; border-bottom:1px solid var(--linie); }
+  .zeichen, .rang-glyph, .planet-kopf .g, #standTabelle td span[style*="color"] {
+    font-family:'Apple Symbols','Segoe UI Symbol','DejaVu Sans',serif;
+  }
+  .rang-glyph { font-size:1.5rem; width:1.5em; text-align:center; flex:none; }
+  .rang-name { font-family:var(--caps); font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; flex:none; width:6.2em; }
+  .rang-balken { flex:1; height:9px; background:rgba(43,33,23,.09); border-radius:5px; position:relative; overflow:hidden; }
+  .rang-balken i { position:absolute; top:0; bottom:0; border-radius:5px; }
+  .rang-wert { font-variant-numeric:tabular-nums; width:3.2em; text-align:right; flex:none; font-weight:600; }
+
+  /* ---------- Planetenabschnitt ---------- */
+  .planet-block { border-top:2px solid; padding-top:1.1rem; margin-top:2.2rem; }
+  .planet-kopf { display:flex; align-items:baseline; gap:.8rem; flex-wrap:wrap; margin-bottom:.5rem; }
+  .planet-kopf .g { font-size:2rem; line-height:1; }
+  .planet-kopf h3 { letter-spacing:.1em; }
+  .planet-stand { font-size:.95rem; color:var(--tinte-blass); }
+  .urteil {
+    font-family:var(--caps); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
+    padding:.24rem .7rem; border-radius:2px; border:1px solid currentColor; white-space:nowrap;
+  }
+  .wuerdenpaar { display:grid; gap:1.2rem 2rem; grid-template-columns:repeat(auto-fit,minmax(15rem,1fr)); margin-top:.9rem; }
+  .wuerdenliste { list-style:none; margin:0; padding:0; font-size:.93rem; }
+  .wuerdenliste li { display:flex; justify-content:space-between; gap:1rem; padding:.22rem 0; border-bottom:1px dotted var(--linie); }
+
+  /* ---------- Steine ---------- */
+  .stein-gitter { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(14rem,1fr)); margin-top:1rem; }
+  .stein { border:1px solid var(--pergament-rand); border-radius:2px; padding:.9rem 1rem; background:rgba(255,253,247,.6); }
+  .stein h4 { font-family:var(--caps); font-size:.9rem; letter-spacing:.08em; margin:0 0 .2rem; }
+  .stein .lat { font-style:italic; font-size:.86rem; color:var(--tinte-blass); }
+  .stein dl { margin:.6rem 0 0; font-size:.86rem; display:grid; grid-template-columns:auto 1fr; gap:.15rem .6rem; }
+  .stein dt { color:var(--tinte-blass); }
+  .stein dd { margin:0; }
+  .stein .anm { font-size:.85rem; margin:.6rem 0 0; color:var(--tinte-blass); }
+  .krone { color:var(--gold); }
+
+  .fehler { color:var(--rubrik); font-weight:600; }
+  #ergebnis[hidden]{ display:none; }
+</style>
+</head>
+<body>
+<script src="kopf.js?v=4"></script>
+
+<main>
+  <section class="bahn">
+    <p class="klein-kapital">Der Rechner</p>
+    <h1>Das Geburtshoroskop</h1>
+    <p style="max-width:42rem">Zeit und Ort der Geburt bestimmen, wo die Planeten
+    standen und wie stark sie dort waren. Ist die Uhrzeit unbekannt, genügt eine
+    Schätzung — dann stehen Aszendent und Häuser allerdings auf unsicherem Grund.</p>
+
+    <form id="form" class="tafel" style="margin-top:1.6rem" autocomplete="off">
+      <div class="feldgruppe">
+        <div class="feld voll">
+          <label for="name">Name (wird nur angezeigt)</label>
+          <input type="text" id="name" placeholder="ohne Angabe">
+        </div>
+        <div class="feld">
+          <label for="datum">Geburtsdatum</label>
+          <input type="date" id="datum" required value="1990-05-14" min="1800-01-01" max="2049-12-31">
+        </div>
+        <div class="feld">
+          <label for="zeit">Geburtszeit</label>
+          <input type="time" id="zeit" required value="09:30">
+        </div>
+        <div class="feld voll">
+          <label for="ort">Geburtsort</label>
+          <select id="ort"></select>
+        </div>
+        <div class="feld" id="feldBreite" hidden>
+          <label for="breite">Breite (Nord positiv)</label>
+          <input type="number" id="breite" step="0.001" min="-90" max="90" value="48.137">
+        </div>
+        <div class="feld" id="feldLaenge" hidden>
+          <label for="laenge">Länge (Ost positiv)</label>
+          <input type="number" id="laenge" step="0.001" min="-180" max="180" value="11.575">
+        </div>
+        <div class="feld" id="feldZone" hidden>
+          <label for="zone">Zeitzone bei Geburt</label>
+          <select id="zone"></select>
+        </div>
+      </div>
+      <p class="hinweis" id="zonenhinweis" style="margin:.9rem 0 0"></p>
+      <p style="margin:1.4rem 0 0"><button type="submit" class="knopf">Berechnen</button></p>
+      <p id="fehler" class="fehler" style="margin:.8rem 0 0"></p>
+    </form>
+  </section>
+
+  <div id="ergebnis" hidden>
+    <section class="bahn">
+      <h2 id="ergebnisKopf">Das Radix</h2>
+      <p id="ergebnisUnter" class="klein-kapital" style="margin-top:.3rem"></p>
+      <div class="radix-huelle" style="margin-top:1.6rem">
+        <div>
+          <div class="radix-tafel">
+            <button type="button" id="btnRund" aria-pressed="true">Rundes Radix</button>
+            <button type="button" id="btnEckig" aria-pressed="false">Quadratische Figur</button>
+          </div>
+          <svg id="radix" viewBox="-46 -46 1092 1092" role="img" aria-label="Geburtshoroskop"></svg>
+        </div>
+        <div>
+          <div class="tafel">
+            <h3 style="margin-bottom:.2rem">Stärke der Planeten</h3>
+            <p class="hinweis" style="margin:0 0 .8rem">Summe aus wesentlichen und
+            zufälligen Würden</p>
+            <div id="rangliste"></div>
+          </div>
+          <div class="tafel" style="margin-top:1.2rem">
+            <h3 style="margin-bottom:.6rem">Stände</h3>
+            <div class="tabellenrahmen"><table id="standTabelle"></table></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bahn">
+      <h2>Die Steine, die fehlen</h2>
+      <p id="empfehlungText" style="max-width:44rem"></p>
+      <div id="empfehlungen"></div>
+    </section>
+
+    <section class="bahn">
+      <h2>Alle sieben Planeten im Einzelnen</h2>
+      <div id="details"></div>
+    </section>
+  </div>
+</main>
+
+<script src="astro.js?v=4"></script>
+<script src="wuerden.js?v=4"></script>
+<script src="steine.js?v=4"></script>
+<script src="orte.js?v=4"></script>
+<script src="rechner.js?v=4"></script>
+</body>
+</html>
