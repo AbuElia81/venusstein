@@ -24,6 +24,10 @@ traditioneller Methode und nennt zu den schwächsten die überlieferten Steine.
 | `steine.js` | Lapidarium nach Agrippa (1533), mit heutiger Bestimmung und Bezugsangaben |
 | `orte.js` | 158 Geburtsorte; Zeitzonenversatz aus der IANA-Datenbank des Browsers |
 
+Bei unbekannter Geburtszeit entfallen Aszendent, Häuser und Hauswertung; gefragt
+wird stattdessen nach der ungefähren Tageszeit. Die Zahlen dahinter stehen in
+`methode.html` und lassen sich mit `zeitanalyse.js` nachrechnen.
+
 Kein Build, keine Abhängigkeiten, keine Anfragen an fremde Dienste — bis auf die
 Schriften von Google Fonts. Alles rechnet im Browser.
 
@@ -46,6 +50,12 @@ Rechenkern prüfen (JavaScriptCore ist auf macOS vorinstalliert):
 
 ```bash
 /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Helpers/jsc astro.js wuerden.js pruefung.js
+```
+
+Empfindlichkeit gegenüber unbekannter Geburtszeit nachrechnen:
+
+```bash
+/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Helpers/jsc astro.js wuerden.js zeitanalyse.js
 ```
 
 ## Quellen

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="stil.css?v=4">
+<link rel="stylesheet" href="stil.css?v=8">
 <style>
   /* ---------- Radix ---------- */
   .radix-huelle { display:grid; gap:1.8rem; grid-template-columns:minmax(0,1fr); align-items:start; }
@@ -58,20 +58,31 @@
   .stein .anm { font-size:.85rem; margin:.6rem 0 0; color:var(--tinte-blass); }
   .krone { color:var(--gold); }
 
+  .schalter { display:flex; align-items:center; gap:.45rem; margin-top:.45rem; }
+  .schalter input { width:auto; margin:0; accent-color:var(--rubrik); }
+  .schalter label { font-size:.78rem; letter-spacing:.05em; text-transform:none;
+    font-family:var(--serif); color:var(--tinte); cursor:pointer; }
+  .merk {
+    border-left:2px solid var(--gold); background:rgba(200,164,65,.09);
+    padding:.75rem 1rem; margin:1rem 0 0; font-size:.92rem; border-radius:0 2px 2px 0;
+  }
+  .merk p { margin:0 0 .45rem; } .merk p:last-child { margin:0; }
+  .merk strong { color:var(--rubrik); }
   .fehler { color:var(--rubrik); font-weight:600; }
   #ergebnis[hidden]{ display:none; }
 </style>
 </head>
 <body>
-<script src="kopf.js?v=4"></script>
+<script src="kopf.js?v=8"></script>
 
 <main>
   <section class="bahn">
     <p class="klein-kapital">Der Rechner</p>
     <h1>Das Geburtshoroskop</h1>
     <p style="max-width:42rem">Zeit und Ort der Geburt bestimmen, wo die Planeten
-    standen und wie stark sie dort waren. Ist die Uhrzeit unbekannt, genügt eine
-    Schätzung — dann stehen Aszendent und Häuser allerdings auf unsicherem Grund.</p>
+    standen und wie stark sie dort waren. Ist die Uhrzeit nicht bekannt, wird sie
+    nicht geraten: Aszendent und Häuser entfallen dann, und gewertet wird nur, was
+    ohne sie feststeht. Eine grobe Tageszeit genügt für ein belastbares Ergebnis.</p>
 
     <form id="form" class="tafel" style="margin-top:1.6rem" autocomplete="off">
       <div class="feldgruppe">
@@ -85,7 +96,21 @@
         </div>
         <div class="feld">
           <label for="zeit">Geburtszeit</label>
-          <input type="time" id="zeit" required value="09:30">
+          <input type="time" id="zeit" value="09:30">
+          <div class="schalter">
+            <input type="checkbox" id="zeitUnbekannt">
+            <label for="zeitUnbekannt">Geburtszeit unbekannt</label>
+          </div>
+        </div>
+        <div class="feld" id="feldTageszeit" hidden>
+          <label for="tageszeit">Ungefähre Tageszeit</label>
+          <select id="tageszeit">
+            <option value="morgen">Morgens — 6 bis 12 Uhr</option>
+            <option value="nachmittag" selected>Nachmittags — 12 bis 18 Uhr</option>
+            <option value="abend">Abends — 18 bis 24 Uhr</option>
+            <option value="nacht">Nachts — 0 bis 6 Uhr</option>
+            <option value="garnicht">Auch das ist unbekannt</option>
+          </select>
         </div>
         <div class="feld voll">
           <label for="ort">Geburtsort</label>
@@ -105,6 +130,7 @@
         </div>
       </div>
       <p class="hinweis" id="zonenhinweis" style="margin:.9rem 0 0"></p>
+      <div id="unbekanntHinweis" class="merk" hidden></div>
       <p style="margin:1.4rem 0 0"><button type="submit" class="knopf">Berechnen</button></p>
       <p id="fehler" class="fehler" style="margin:.8rem 0 0"></p>
     </form>
@@ -140,6 +166,7 @@
     <section class="bahn">
       <h2>Die Steine, die fehlen</h2>
       <p id="empfehlungText" style="max-width:44rem"></p>
+      <div id="vorbehalt" class="merk" hidden style="max-width:44rem"></div>
       <div id="empfehlungen"></div>
     </section>
 
@@ -150,10 +177,10 @@
   </div>
 </main>
 
-<script src="astro.js?v=4"></script>
-<script src="wuerden.js?v=4"></script>
-<script src="steine.js?v=4"></script>
-<script src="orte.js?v=4"></script>
-<script src="rechner.js?v=4"></script>
+<script src="astro.js?v=8"></script>
+<script src="wuerden.js?v=8"></script>
+<script src="steine.js?v=8"></script>
+<script src="orte.js?v=8"></script>
+<script src="rechner.js?v=8"></script>
 </body>
 </html>

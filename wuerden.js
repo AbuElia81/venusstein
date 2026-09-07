@@ -90,12 +90,14 @@ function essential(planet, sign, degInSign, isDay) {
 var HOUSE_SCORE = { 1:5, 10:5, 7:4, 4:4, 11:4, 2:3, 5:3, 9:2, 3:1, 8:-4, 6:-4, 12:-5 };
 var ORB_PARTILE = 1.0;
 
-function accidental(name, ch) {
+function accidental(name, ch, opt) {
   var p = ch.planets[name], sun = ch.planets['Sonne'], out = [], score = 0;
   var A = root.Astro;
   function add(label, pts) { out.push([label, pts]); score += pts; }
 
-  add('Haus ' + p.house, HOUSE_SCORE[p.house]);
+  /* Ohne Geburtszeit steht der Aszendent nicht fest, also auch die Haeuser
+     nicht — dann bleibt die Hauswertung aussen vor. */
+  if (!(opt && opt.ohneHaeuser)) add('Haus ' + p.house, HOUSE_SCORE[p.house]);
 
   if (name !== 'Sonne' && name !== 'Mond') {
     if (p.retrograde) add('rückläufig', -5); else add('direktläufig', 4);
@@ -164,12 +166,12 @@ function verdict(total) {
   return              { label: 'stark geschwächt', key: 'sehr-schwach' };
 }
 
-function judge(ch) {
+function judge(ch, opt) {
   var res = {};
   ch.order.forEach(function (n) {
     var p = ch.planets[n];
     var e = essential(n, p.sign, p.degInSign, ch.isDay);
-    var a = accidental(n, ch);
+    var a = accidental(n, ch, opt);
     var total = e.score + a.score;
     res[n] = { name: n, essential: e, accidental: a,
                total: total, verdict: verdict(total),

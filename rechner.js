@@ -50,6 +50,17 @@ for (var z = -12; z <= 14; z += 0.5) {
   zonenWahl.appendChild(o);
 }
 
+/* Zeitfenster, wenn die Uhrzeit nicht bekannt ist: von, bis, Vertreterzeit */
+var BAENDER = {
+  morgen:      { von: 6,  bis: 12, vertreter: 9,    text: 'morgens (6 bis 12 Uhr)' },
+  nachmittag:  { von: 12, bis: 18, vertreter: 15,   text: 'nachmittags (12 bis 18 Uhr)' },
+  abend:       { von: 18, bis: 24, vertreter: 21,   text: 'abends (18 bis 24 Uhr)' },
+  nacht:       { von: 0,  bis: 6,  vertreter: 3,    text: 'nachts (0 bis 6 Uhr)' },
+  garnicht:    { von: 0,  bis: 24, vertreter: 12,   text: 'zu unbekannter Stunde' }
+};
+function zeitUnbekannt() { return $('zeitUnbekannt').checked; }
+function band() { return BAENDER[$('tageszeit').value]; }
+
 function eigenModus() { return ortWahl.value === 'eigen'; }
 function ortWechsel() {
   var e = eigenModus();
@@ -57,6 +68,27 @@ function ortWechsel() {
   zonenHinweis();
 }
 ortWahl.addEventListener('change', ortWechsel);
+
+function zeitWechsel() {
+  var u = zeitUnbekannt();
+  $('zeit').disabled = u;
+  $('zeit').style.opacity = u ? .45 : 1;
+  $('feldTageszeit').hidden = !u;
+  $('unbekanntHinweis').hidden = !u;
+  if (u) {
+    $('unbekanntHinweis').innerHTML =
+      '<p><strong>Ohne Uhrzeit entfallen Aszendent und Häuser.</strong> Der Aszendent ' +
+      'durchläuft im Tagesverlauf alle zwölf Zeichen — er lässt sich nicht raten. Die ' +
+      'Würden werden darum ohne die Hauswertung gerechnet.</p>' +
+      '<p>Was bleibt, ist belastbar: Die Punktzahl von Saturn, Mars, Sonne, Venus und ' +
+      'Jupiter schwankt dann über den ganzen Tag nur noch um 0,4 bis 2,2 Punkte statt ' +
+      'um 10 bis 12. Eine grobe Tageszeit hebt die Verlässlichkeit von 89 auf rund ' +
+      '96 Prozent. <a href="methode.html#ohnezeit">Näheres zur Rechnung.</a></p>';
+  }
+  zonenHinweis();
+}
+$('zeitUnbekannt').addEventListener('change', zeitWechsel);
+$('tageszeit').addEventListener('change', zonenHinweis);
 ['datum','zeit'].forEach(function (id) { $(id).addEventListener('change', zonenHinweis); });
 
 function zonenHinweis() {
@@ -76,9 +108,17 @@ function zonenHinweis() {
 
 function daten() {
   var dv = $('datum').value, tv = $('zeit').value;
-  if (!dv || !tv) return null;
-  var dp = dv.split('-').map(Number), tp = tv.split(':').map(Number);
-  var b = { year: dp[0], month: dp[1], day: dp[2], hour: tp[0], minute: tp[1] };
+  if (!dv) return null;
+  var dp = dv.split('-').map(Number);
+  var b = { year: dp[0], month: dp[1], day: dp[2] };
+  if (zeitUnbekannt()) {
+    b.unbekannt = true; b.band = band();
+    b.hour = Math.floor(b.band.vertreter); b.minute = (b.band.vertreter % 1) * 60;
+  } else {
+    if (!tv) return null;
+    var tp = tv.split(':').map(Number);
+    b.hour = tp[0]; b.minute = tp[1];
+  }
   if (eigenModus()) {
     b.lat = parseFloat($('breite').value);
     b.lon = parseFloat($('laenge').value);
@@ -94,8 +134,9 @@ function daten() {
 /* ============================================================
    Rundes Radix
    ============================================================ */
-function zeichneRund(ch, urteil) {
-  var svg = $('radix'), c = 500, basis = ch.ascSign * 30;
+function zeichneRund(ch, urteil, ohneHaeuser) {
+  /* Ohne Aszendent gibt es keinen Anfangspunkt — dann liegt 0 Grad Widder links. */
+  var svg = $('radix'), c = 500, basis = ohneHaeuser ? 0 : ch.ascSign * 30;
   var R = { aussen:472, tk_a:472, tk_i:452, band_i:396, planet:336, marke:300, haus_a:246, haus_i:196 };
   var teile = [];
 
@@ -125,8 +166,10 @@ function zeichneRund(ch, urteil) {
   teile.push('<circle cx="500" cy="500" r="472" fill="#fbf5e6"/>');
   kreis(R.aussen, '#a8801f', 3);
   kreis(R.band_i, '#a8801f', 1.5);
-  kreis(R.haus_a, 'rgba(43,33,23,.35)', 1);
-  kreis(R.haus_i, 'rgba(43,33,23,.2)', 1);
+  if (!ohneHaeuser) {
+    kreis(R.haus_a, 'rgba(43,33,23,.35)', 1);
+    kreis(R.haus_i, 'rgba(43,33,23,.2)', 1);
+  }
   kreis(R.marke, 'rgba(43,33,23,.12)', 1);
 
   /* Gradteilung */
@@ -138,15 +181,16 @@ function zeichneRund(ch, urteil) {
 
   /* Zeichen und Haeuser — bei Ganzzeichenhaeusern faellt beides zusammen */
   for (var i = 0; i < 12; i++) {
-    var sign = (ch.ascSign + i) % 12, start = sign * 30;
-    line(start, R.haus_i, R.aussen, i % 3 === 0 ? '#8f2c21' : 'rgba(43,33,23,.45)', i % 3 === 0 ? 2.2 : 1.1);
+    var sign = ohneHaeuser ? i : (ch.ascSign + i) % 12, start = sign * 30;
+    var betont = !ohneHaeuser && i % 3 === 0;
+    line(start, ohneHaeuser ? R.marke : R.haus_i, R.aussen,
+         betont ? '#8f2c21' : 'rgba(43,33,23,.45)', betont ? 2.2 : 1.1);
     text(start + 15, 424, GLYPH[sign], { size: 34, fill: '#8f2c21', font: SYMBOL });
-    text(start + 15, 221, String(i + 1), { size: 22, fill: 'rgba(43,33,23,.55)' });
-    /* Zeichennamen ganz aussen, leicht gedreht waere schoener, hier schlicht */
+    if (!ohneHaeuser) text(start + 15, 221, String(i + 1), { size: 22, fill: 'rgba(43,33,23,.55)' });
   }
 
-  /* Aszendent und Medium Coeli */
-  [[ch.asc, 'ASC', '#8f2c21'], [ch.mc, 'MC', '#a8801f']].forEach(function (m) {
+  /* Aszendent und Medium Coeli — nur bei bekannter Geburtszeit */
+  (ohneHaeuser ? [] : [[ch.asc, 'ASC', '#8f2c21'], [ch.mc, 'MC', '#a8801f']]).forEach(function (m) {
     line(m[0], R.haus_i, R.aussen + 14, m[2], 2.6);
     var p = pt(m[0], R.aussen + 34);
     teile.push('<text x="' + p[0].toFixed(1) + '" y="' + p[1].toFixed(1) +
@@ -187,8 +231,9 @@ function zeichneRund(ch, urteil) {
   /* Mitte */
   teile.push('<circle cx="500" cy="500" r="196" fill="rgba(255,253,247,.75)"/>');
   var nm = $('name').value.trim();
-  var mitte = [nm || '', ch.isDay ? 'Tagesgeburt' : 'Nachtgeburt',
-               'ASC ' + stand(ch.asc)].filter(Boolean);
+  var mitte = ohneHaeuser
+    ? [nm || '', ch.isDay ? 'Tagesgeburt' : 'Nachtgeburt', 'ohne Aszendent'].filter(Boolean)
+    : [nm || '', ch.isDay ? 'Tagesgeburt' : 'Nachtgeburt', 'ASC ' + stand(ch.asc)].filter(Boolean);
   mitte.forEach(function (t, i) {
     teile.push('<text x="500" y="' + (500 - (mitte.length - 1) * 17 + i * 34) +
       '" text-anchor="middle" dominant-baseline="central" font-size="' + (i === 0 ? 27 : 21) +
@@ -297,14 +342,15 @@ function rangliste(urteil) {
   }).join('');
 }
 
-function standTabelle(ch, urteil) {
-  var kopf = '<thead><tr><th>Planet</th><th>Stand</th><th>Haus</th><th class="zahl">Würden</th></tr></thead>';
+function standTabelle(ch, urteil, ohneHaeuser) {
+  var kopf = '<thead><tr><th>Planet</th><th>Stand</th>' +
+    (ohneHaeuser ? '' : '<th>Haus</th>') + '<th class="zahl">Würden</th></tr></thead>';
   var leib = ch.order.map(function (n) {
     var u = urteil.planets[n];
     return '<tr><td><span style="color:' + farbeVon(n) + '">' + PL[n].g + '</span> ' + n + '</td>' +
       '<td>' + grad(u.degInSign) + ' ' + u.glyph + ' ' + u.signName +
       (u.retrograde ? ' <span title="rückläufig">℞</span>' : '') + '</td>' +
-      '<td>' + u.house + '</td>' +
+      (ohneHaeuser ? '' : '<td>' + u.house + '</td>') +
       '<td class="zahl ' + klasse(u.total) + '">' + vz(u.total) + '</td></tr>';
   }).join('');
   $('standTabelle').innerHTML = kopf + '<tbody>' + leib + '</tbody>';
@@ -322,7 +368,7 @@ function steinKarte(s) {
     (s.hinweis ? '<p class="anm">' + s.hinweis + '</p>' : '') + '</div>';
 }
 
-function empfehlungen(urteil) {
+function empfehlungen(urteil, ohneHaeuser) {
   var drei = Steine.empfehlung(urteil, 3);
   var schwach = drei.filter(function (e) { return e.urteil.total < 5; });
   var ziel = schwach.length ? schwach : drei.slice(0, 1);
@@ -341,7 +387,7 @@ function empfehlungen(urteil) {
       '<div class="planet-kopf"><span class="g" style="color:' + farbe + '">' + l.glyph + '</span>' +
       '<h3 style="color:' + farbe + '">' + e.planet + '</h3>' +
       '<span class="planet-stand">' + grad(e.urteil.degInSign) + ' ' + e.urteil.glyph + ' ' +
-      e.urteil.signName + ' · Haus ' + e.urteil.house + '</span>' +
+      e.urteil.signName + (ohneHaeuser ? '' : ' · Haus ' + e.urteil.house) + '</span>' +
       '<span class="urteil" style="color:' + farbe + '">' + e.urteil.verdict.label +
       ' · ' + vz(e.urteil.total) + '</span></div>' +
       '<p style="max-width:44rem">' + l.mangel + '</p>' +
@@ -350,7 +396,7 @@ function empfehlungen(urteil) {
   }).join('');
 }
 
-function einzelheiten(ch, urteil) {
+function einzelheiten(ch, urteil, ohneHaeuser) {
   $('details').innerHTML = ch.order.map(function (n) {
     var u = urteil.planets[n], farbe = farbeVon(n);
     function liste(rows) {
@@ -363,7 +409,7 @@ function einzelheiten(ch, urteil) {
       '<div class="planet-kopf"><span class="g" style="color:' + farbe + '">' + PL[n].g + '</span>' +
       '<h3 style="color:' + farbe + '">' + n + '</h3>' +
       '<span class="planet-stand">' + grad(u.degInSign) + ' ' + u.glyph + ' ' + u.signName +
-      ' · Haus ' + u.house + (u.retrograde ? ' · rückläufig' : '') + '</span>' +
+      (ohneHaeuser ? '' : ' · Haus ' + u.house) + (u.retrograde ? ' · rückläufig' : '') + '</span>' +
       '<span class="urteil" style="color:' + farbe + '">' + u.verdict.label + ' · ' + vz(u.total) + '</span>' +
       '</div><div class="wuerdenpaar">' +
       '<div><p class="klein-kapital">Wesentliche Würden — ' + vz(u.essential.score) + '</p>' +
@@ -373,6 +419,54 @@ function einzelheiten(ch, urteil) {
   }).join('');
 }
 
+/* ------------------------------------------------------------
+   Was aendert sich innerhalb des angegebenen Zeitfensters?
+   Geprueft werden die beiden Dinge, die ohne Uhrzeit noch
+   wandern koennen: das Mondzeichen und die Tag-Nacht-Frage.
+   ------------------------------------------------------------ */
+function fensterPruefen(b, versatz) {
+  function stelle(stunde) {
+    return Astro.chart({ year: b.year, month: b.month, day: b.day,
+                         hour: Math.floor(stunde), minute: Math.round((stunde % 1) * 60),
+                         tz: versatz, lat: b.lat, lon: b.lon });
+  }
+  var a = stelle(b.band.von), z = stelle(Math.min(b.band.bis, 23.983));
+  return {
+    mondWechsel: a.planets['Mond'].sign !== z.planets['Mond'].sign,
+    mondZeichen: [SIGNS[a.planets['Mond'].sign], SIGNS[z.planets['Mond'].sign]],
+    tagNachtUnsicher: a.isDay !== z.isDay
+  };
+}
+
+function vorbehalteZeigen(b, pruef, urteil) {
+  var kasten = $('vorbehalt');
+  if (!b.unbekannt) { kasten.hidden = true; return; }
+  var t = ['<p><strong>Ohne Uhrzeit gerechnet</strong> — ' + b.band.text +
+           '. Aszendent und Häuser bleiben außen vor, die Würden stützen sich auf ' +
+           'Zeichenstand, Lauf und Stellung zur Sonne.</p>'];
+  if (pruef.mondWechsel) {
+    t.push('<p>Der Mond wechselt in diesem Zeitfenster das Zeichen — von ' +
+      pruef.mondZeichen[0] + ' nach ' + pruef.mondZeichen[1] +
+      '. <strong>Was zum Mond gesagt wird, steht damit unter Vorbehalt.</strong> ' +
+      'Die übrigen Planeten sind davon nicht berührt.</p>');
+  } else {
+    t.push('<p>Der Mond bleibt im ganzen Zeitfenster in ' + pruef.mondZeichen[0] +
+      ' — hier gibt es keine Unsicherheit.</p>');
+  }
+  if (pruef.tagNachtUnsicher) {
+    t.push('<p>Im gewählten Fenster geht die Sonne auf oder unter — ob es eine Tag- oder ' +
+      'eine Nachtgeburt war, steht also nicht fest. Davon hängen die ' +
+      'Triplizitätsherrscher ab. <strong>Eine genauere Angabe würde das Ergebnis hier ' +
+      'merklich sicherer machen.</strong></p>');
+  }
+  if (urteil.planets['Merkur'].total <= urteil.planets[urteil.ranked[2]].total) {
+    t.push('<p>Merkur gehört zu den schwächsten Planeten. Er ist neben dem Mond der ' +
+      'beweglichste — ein Vorbehalt ist auch hier angebracht.</p>');
+  }
+  kasten.innerHTML = t.join('');
+  kasten.hidden = false;
+}
+
 /* ============================================================
    Ablauf
    ============================================================ */
@@ -380,7 +474,11 @@ var letztes = null, form = 'rund';
 
 function zeichne() {
   if (!letztes) return;
-  (form === 'rund' ? zeichneRund : zeichneEckig)(letztes.ch, letztes.urteil);
+  var ohneH = letztes.ohneHaeuser;
+  /* Die quadratische Figur ist eine Haeuserfigur — ohne Haeuser hat sie keinen Sinn. */
+  $('btnEckig').hidden = ohneH;
+  if (ohneH) form = 'rund';
+  (form === 'rund' ? zeichneRund : zeichneEckig)(letztes.ch, letztes.urteil, ohneH);
   $('btnRund').setAttribute('aria-pressed', form === 'rund');
   $('btnEckig').setAttribute('aria-pressed', form === 'eckig');
 }
@@ -400,25 +498,29 @@ $('form').addEventListener('submit', function (ev) {
   var ch = Astro.chart({ year: b.year, month: b.month, day: b.day,
                          hour: b.hour, minute: b.minute, tz: versatz,
                          lat: b.lat, lon: b.lon });
-  var urteil = Wuerden.judge(ch);
-  letztes = { ch: ch, urteil: urteil, b: b };
+  var ohneH = !!b.unbekannt;
+  var urteil = Wuerden.judge(ch, { ohneHaeuser: ohneH });
+  letztes = { ch: ch, urteil: urteil, b: b, ohneHaeuser: ohneH };
 
   var nm = $('name').value.trim();
   $('ergebnisKopf').textContent = nm ? 'Das Radix für ' + nm : 'Das Radix';
   $('ergebnisUnter').textContent =
     String(b.day).padStart(2, '0') + '.' + String(b.month).padStart(2, '0') + '.' + b.year +
-    ' um ' + String(b.hour).padStart(2, '0') + ':' + String(b.minute).padStart(2, '0') +
+    (ohneH ? ' · ' + b.band.text
+           : ' um ' + String(b.hour).padStart(2, '0') + ':' + String(b.minute).padStart(2, '0')) +
     ' · ' + b.ortName + ' · UTC' + (versatz >= 0 ? '+' : '−') + Math.abs(versatz) +
     ' · ' + (ch.isDay ? 'Tagesgeburt' : 'Nachtgeburt');
 
   $('ergebnis').hidden = false;
   zeichne();
   rangliste(urteil);
-  standTabelle(ch, urteil);
-  empfehlungen(urteil);
-  einzelheiten(ch, urteil);
+  standTabelle(ch, urteil, ohneH);
+  empfehlungen(urteil, ohneH);
+  einzelheiten(ch, urteil, ohneH);
+  vorbehalteZeigen(b, ohneH ? fensterPruefen(b, versatz) : null, urteil);
   $('ergebnis').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 ortWechsel();
+zeitWechsel();
 })();

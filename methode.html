@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="stil.css?v=4">
+<link rel="stylesheet" href="stil.css?v=8">
 <style>
   .bahn-eng h2 { margin-top:2.6rem; }
   .bahn-eng h3 { margin-top:1.8rem; margin-bottom:.4rem; }
@@ -18,7 +18,7 @@
 </style>
 </head>
 <body>
-<script src="kopf.js?v=4"></script>
+<script src="kopf.js?v=8"></script>
 
 <main>
   <section class="bahn bahn-eng">
@@ -52,6 +52,65 @@
     <p>Ist die Geburtszeit unbekannt, verschiebt sich vor allem der Aszendent: Er
     wandert in vier Minuten um ein Grad. Die Zeichenstände der langsamen Planeten
     bleiben davon nahezu unberührt, die Häuser jedoch nicht.</p>
+
+    <h2 id="ohnezeit">Wenn die Geburtszeit fehlt</h2>
+    <p>Die Uhrzeit lässt sich nicht raten. Der Aszendent wandert in vier Minuten um
+    ein Grad und durchläuft im Tagesverlauf <strong>alle zwölf Zeichen</strong>; mit
+    ihm wandern sämtliche Häuser. Da Lillys Haustafel allein bis zu zehn Punkte
+    ausmacht — Haus 1 gibt +5, Haus 12 gibt −5 —, wäre eine auf zwölf Uhr geratene
+    Rechnung nicht bloß ungenau, sondern irreführend.</p>
+    <p>Wie irreführend, lässt sich messen. Für 260 Nativitäten wurde die Geburtszeit
+    in Viertelstundenschritten über volle vierundzwanzig Stunden durchgerechnet und
+    mit der Zwölf-Uhr-Annahme verglichen:</p>
+    <div class="tabellenrahmen">
+      <table>
+        <thead><tr><th>Zwölf Uhr angenommen, voll gerechnet</th><th class="zahl">Trefferquote</th></tr></thead>
+        <tbody>
+          <tr><td>Der schwächste Planet stimmt</td><td class="zahl">60,8 %</td></tr>
+          <tr><td>Von den drei Schwächsten richtig</td><td class="zahl">2,25 von 3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Vier von zehn Steinempfehlungen gingen also an den falschen Planeten. Lässt man
+    dagegen die Hauswertung weg, bricht die Schwankung zusammen — hier die Spanne, um
+    die eine Punktzahl im Tagesverlauf wandert:</p>
+    <div class="tabellenrahmen">
+      <table>
+        <thead><tr><th>Planet</th><th class="zahl">mit Häusern</th><th class="zahl">ohne Häuser</th></tr></thead>
+        <tbody>
+          <tr><td>Mars</td><td class="zahl">10,3</td><td class="zahl">0,4</td></tr>
+          <tr><td>Saturn</td><td class="zahl">11,1</td><td class="zahl">1,3</td></tr>
+          <tr><td>Sonne</td><td class="zahl">11,2</td><td class="zahl">1,6</td></tr>
+          <tr><td>Venus</td><td class="zahl">11,4</td><td class="zahl">1,9</td></tr>
+          <tr><td>Jupiter</td><td class="zahl">11,8</td><td class="zahl">2,2</td></tr>
+          <tr><td>Merkur</td><td class="zahl">12,5</td><td class="zahl">3,3</td></tr>
+          <tr><td>Mond</td><td class="zahl">14,7</td><td class="zahl">6,3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Darum verfährt der Rechner bei unbekannter Geburtszeit so: Aszendent, Häuser
+    und Hauswertung entfallen ersatzlos, das Radix zeigt nur den Zeichenkranz. Gewertet
+    wird, was ohne Uhrzeit feststeht — Zeichenstand mit Domizil, Erhöhung, Triplizität,
+    Terminus und Gesicht, dazu Lauf, Geschwindigkeit und Stellung zur Sonne.</p>
+    <p>Es bleiben zwei bewegliche Größen, und beide werden benannt statt verschwiegen.
+    Der <strong>Mond</strong> läuft rund dreizehn Grad am Tag und wechselt in 42 Prozent
+    der Fälle das Zeichen; geschieht das im angegebenen Fenster, wird es ausgewiesen.
+    Und die Frage <strong>Tag oder Nacht</strong> entscheidet über die
+    Triplizitätsherrscher — sie ändert in 13,7 Prozent der Fälle, welcher Planet als
+    schwächster gilt. Darum die Frage nach der ungefähren Tageszeit:</p>
+    <div class="tabellenrahmen">
+      <table>
+        <thead><tr><th>Angabe</th><th class="zahl">Rangfolge bleibt stabil</th></tr></thead>
+        <tbody>
+          <tr><td>Uhrzeit völlig unbekannt</td><td class="zahl">88,8 %</td></tr>
+          <tr><td>Tageshälfte bekannt (Tag / Nacht)</td><td class="zahl">95,9 % / 94,8 %</td></tr>
+          <tr><td>Zeitfenster von vier Stunden</td><td class="zahl">98,3 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Für Saturn, Mars, Sonne, Venus und Jupiter ist die Steinempfehlung damit
+    praktisch so belastbar wie mit genauer Zeit. Bei Merkur und Mond steht sie unter
+    Vorbehalt — und der wird angezeigt.</p>
 
     <h2>Die Häuser</h2>
     <p>Gerechnet wird mit <strong>Ganzzeichenhäusern</strong>: Das Zeichen des
