@@ -230,6 +230,25 @@ var LAPIDARIUM = {
   }
 };
 
+/* Miniaturbilder — ein Bild je Stein, über mehrere Planeten hinweg geteilt */
+var BILDER = {
+  'Onyx':'onyx', 'Schwarzer Chalcedon':'schwarzer-chalcedon', 'Magnetit':'magnetit',
+  'Brauner Jaspis':'brauner-jaspis', 'Saphir':'saphir', 'Hyazinth':'hyazinth',
+  'Beryll':'beryll', 'Smaragd':'smaragd', 'Grüner Jaspis':'gruener-jaspis',
+  'Amethyst':'amethyst', 'Blutstein':'blutstein', 'Hämatit':'haematit',
+  'Roter Jaspis':'roter-jaspis', 'Diamant':'diamant', 'Chrysolith':'chrysolith',
+  'Karfunkel':'karfunkel', 'Rubin':'rubin', 'Adlerstein':'adlerstein',
+  'Sonnenauge':'sonnenauge', 'Lapislazuli':'lapislazuli', 'Karneol':'karneol',
+  'Koralle':'koralle', 'Malachit':'malachit', 'Achat':'achat', 'Topas':'topas',
+  'Roter Marmor':'roter-marmor', 'Glas und Obsidian':'obsidian', 'Selenit':'selenit',
+  'Mondstein':'mondstein', 'Bergkristall':'bergkristall', 'Perle':'perle',
+  'Markasit':'markasit'
+};
+function bild(steinName) {
+  var s = BILDER[steinName];
+  return s ? 'bilder/steine/' + s + '.jpg' : null;
+}
+
 /* Der Hauptstein eines Planeten */
 function hauptstein(planet) {
   var l = LAPIDARIUM[planet];
@@ -245,7 +264,8 @@ function empfehlung(urteil, anzahl) {
   });
 }
 
-var api = { LAPIDARIUM: LAPIDARIUM, hauptstein: hauptstein, empfehlung: empfehlung };
+var api = { LAPIDARIUM: LAPIDARIUM, hauptstein: hauptstein, empfehlung: empfehlung,
+            bild: bild };
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 root.Steine = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

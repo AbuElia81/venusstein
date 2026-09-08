@@ -416,7 +416,10 @@ function standTabelle(ch, urteil, ohneHaeuser) {
 function steinKarte(s) {
   var zeilen = [['Bestimmung', s.modern], ['Bezug', s.bezug], ['Preis', s.preis]];
   if (s.form) zeilen.push(['Form', s.form]);
+  var b = Steine.bild(s.name);
   return '<div class="stein">' +
+    (b ? '<img class="stein-bild" src="' + b + '" alt="' + s.name +
+         '" loading="lazy" width="320" height="320">' : '') +
     '<h4>' + (s.haupt ? '<span class="krone" title="Hauptstein">✦</span> ' : '') + s.name + '</h4>' +
     (s.lat && s.lat !== '—' ? '<div class="lat">bei Agrippa: ' + s.lat + '</div>' : '') +
     '<dl>' + zeilen.map(function (z) {
@@ -589,6 +592,7 @@ function klappen(knopf, inhalt) {
     var offen = $(inhalt).hidden;
     $(inhalt).hidden = !offen;
     this.setAttribute('aria-expanded', String(offen));
+    zustandSichern();
   });
 }
 klappen('btnStaende', 'staendeInhalt');
@@ -679,6 +683,58 @@ function druckansicht() {
 $('btnDruck').addEventListener('click', druckansicht);
 
 /* ============================================================
+   Die Berechnung ueberdauert einen Seitenwechsel
+   ------------------------------------------------------------
+   Wer vom Rechner ins Lapidarium schaut und zurueckkommt, soll sein
+   Radix wiederfinden. Gespeichert wird nur die Eingabe, gerechnet
+   wird beim Zurueckkommen neu — so bleibt nichts Veraltetes stehen.
+   ============================================================ */
+var SPEICHER = 'venusstein.eingabe';
+var stelltWiederHer = false;
+
+function zustandSichern() {
+  try {
+    sessionStorage.setItem(SPEICHER, JSON.stringify({
+      name: $('name').value, datum: $('datum').value, zeit: $('zeit').value,
+      zeitUnbekannt: $('zeitUnbekannt').checked, tageszeit: $('tageszeit').value,
+      ort: ortFeld.value, eigeneKoord: $('eigeneKoord').checked,
+      breite: $('breite').value, laenge: $('laenge').value, zone: $('zone').value,
+      form: form,
+      staende: !$('staendeInhalt').hidden, details: !$('details').hidden
+    }));
+  } catch (e) { /* privater Modus, kein Speicher — dann eben nicht */ }
+}
+
+function zustandHolen() {
+  try { return JSON.parse(sessionStorage.getItem(SPEICHER) || 'null'); }
+  catch (e) { return null; }
+}
+
+function zustandWiederherstellen() {
+  var z = zustandHolen();
+  if (!z || !z.datum) return;
+  $('name').value = z.name || '';
+  $('datum').value = z.datum;
+  if (z.zeit) $('zeit').value = z.zeit;
+  $('zeitUnbekannt').checked = !!z.zeitUnbekannt;
+  if (z.tageszeit) $('tageszeit').value = z.tageszeit;
+  $('eigeneKoord').checked = !!z.eigeneKoord;
+  if (z.breite) $('breite').value = z.breite;
+  if (z.laenge) $('laenge').value = z.laenge;
+  if (z.zone) $('zone').value = z.zone;
+  if (z.ort) { ortFeld.value = z.ort; ortGetippt(); }
+  form = z.form === 'eckig' ? 'eckig' : 'rund';
+  zeitWechsel(); ortWechsel();
+
+  stelltWiederHer = true;
+  $('form').requestSubmit();
+  stelltWiederHer = false;
+
+  if (z.staende) { $('staendeInhalt').hidden = false; $('btnStaende').setAttribute('aria-expanded', 'true'); }
+  if (z.details) { $('details').hidden = false; $('btnDetails').setAttribute('aria-expanded', 'true'); }
+}
+
+/* ============================================================
    Ablauf
    ============================================================ */
 var letztes = null, form = 'rund';
@@ -693,8 +749,8 @@ function zeichne() {
   $('btnRund').setAttribute('aria-pressed', form === 'rund');
   $('btnEckig').setAttribute('aria-pressed', form === 'eckig');
 }
-$('btnRund').addEventListener('click', function () { form = 'rund'; zeichne(); });
-$('btnEckig').addEventListener('click', function () { form = 'eckig'; zeichne(); });
+$('btnRund').addEventListener('click', function () { form = 'rund'; zeichne(); zustandSichern(); });
+$('btnEckig').addEventListener('click', function () { form = 'eckig'; zeichne(); zustandSichern(); });
 
 $('form').addEventListener('submit', function (ev) {
   ev.preventDefault();
@@ -729,9 +785,11 @@ $('form').addEventListener('submit', function (ev) {
   empfehlungen(urteil, ohneH);
   einzelheiten(ch, urteil, ohneH);
   vorbehalteZeigen(b, ohneH ? fensterPruefen(b, versatz) : null, urteil);
-  $('ergebnis').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  zustandSichern();
+  if (!stelltWiederHer) $('ergebnis').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 ortWechsel();
 zeitWechsel();
+zustandWiederherstellen();
 })();

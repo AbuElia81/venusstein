@@ -22,14 +22,19 @@ traditioneller Methode und nennt zu den schwächsten die überlieferten Steine.
 | `astro.js` | Ephemeride: Sonne, Mond, Merkur bis Saturn; Aszendent, MC, Mondknoten |
 | `wuerden.js` | Wesentliche und zufällige Würden nach Lilly (1647) |
 | `steine.js` | Lapidarium nach Agrippa (1533), mit heutiger Bestimmung und Bezugsangaben |
-| `orte.js` | 158 Geburtsorte; Zeitzonenversatz aus der IANA-Datenbank des Browsers |
+| `orte.js` | 25.894 Geburtsorte (GeoNames, CC BY); Zeitzonenversatz aus der IANA-Datenbank des Browsers |
 
 Bei unbekannter Geburtszeit entfallen Aszendent, Häuser und Hauswertung; gefragt
 wird stattdessen nach der ungefähren Tageszeit. Die Zahlen dahinter stehen in
 `methode.html` und lassen sich mit `zeitanalyse.js` nachrechnen.
 
 Kein Build, keine Abhängigkeiten, keine Anfragen an fremde Dienste — bis auf die
-Schriften von Google Fonts. Alles rechnet im Browser.
+Schriften von Google Fonts. Alles rechnet im Browser. Die Eingabe wird in der
+`sessionStorage` gehalten, damit ein Seitenwechsel die Berechnung nicht verwirft.
+
+Bilder in `bilder/` und `bilder/steine/` sind mit Gemini erzeugt (`gemini-3-pro-image`
+für die großen, `gemini-3.1-flash-image` für die 32 Steinminiaturen); das Skript dazu
+liegt nicht im Repo, die Prompts stehen in der Commit-Geschichte.
 
 **Gewählte Systeme:** Lillys Würdentafel, aber mit ägyptischen Termini und
 Ganzzeichenhäusern. Triplizitäten bleiben ptolemäisch. Näheres in `methode.html`.

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="stil.css?v=10">
+<link rel="stylesheet" href="stil.css?v=13">
 <style>
   .planet-block { border-top:2px solid; padding-top:1.2rem; margin-top:3rem; }
   .planet-kopf { display:flex; align-items:baseline; gap:.85rem; flex-wrap:wrap; margin-bottom:.5rem; }
@@ -18,6 +18,7 @@
   .planet-meta { font-size:.9rem; color:var(--tinte-blass); }
   .stein-gitter { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(14rem,1fr)); margin-top:1.2rem; }
   .stein { border:1px solid var(--pergament-rand); border-radius:2px; padding:.9rem 1rem; background:rgba(255,253,247,.6); }
+  .stein { display:flex; flex-direction:column; }
   .stein h3 { font-family:var(--caps); font-size:.92rem; letter-spacing:.08em; margin:0 0 .2rem; }
   .stein .lat { font-style:italic; font-size:.86rem; color:var(--tinte-blass); }
   .stein dl { margin:.6rem 0 0; font-size:.86rem; display:grid; grid-template-columns:auto 1fr; gap:.15rem .6rem; }
@@ -35,7 +36,7 @@
 </style>
 </head>
 <body>
-<script src="kopf.js?v=10"></script>
+<script src="kopf.js?v=13"></script>
 
 <main>
   <section class="bahn">
@@ -67,7 +68,7 @@
   <section class="bahn" style="padding-top:0"><div id="lapidarium"></div></section>
 </main>
 
-<script src="steine.js?v=10"></script>
+<script src="steine.js?v=13"></script>
 <script>
 (function () {
   var FARBE = { Saturn:'--sat', Jupiter:'--jup', Mars:'--mar', Sonne:'--sol',
@@ -87,7 +88,10 @@
     var karten = l.steine.map(function (s) {
       var zeilen = [['Bestimmung', s.modern], ['Bezug', s.bezug], ['Preis', s.preis]];
       if (s.form) zeilen.push(['Form', s.form]);
-      return '<div class="stein"><h3>' +
+      var b = Steine.bild(s.name);
+      return '<div class="stein">' +
+        (b ? '<img class="stein-bild" src="' + b + '" alt="' + s.name +
+             '" loading="lazy" width="320" height="320">' : '') + '<h3>' +
         (s.haupt ? '<span class="krone" title="Hauptstein">✦</span> ' : '') + s.name + '</h3>' +
         (s.lat && s.lat !== '—' ? '<div class="lat">bei Agrippa: ' + s.lat + '</div>' : '') +
         '<dl>' + zeilen.map(function (z) { return '<dt>' + z[0] + '</dt><dd>' + z[1] + '</dd>'; }).join('') +

@@ -179,3 +179,11 @@ td.zahl { text-align: right; font-variant-numeric: tabular-nums; white-space: no
 
 /* display-Regeln duerfen das hidden-Attribut nicht aushebeln */
 [hidden] { display: none !important; }
+
+/* Miniaturbild einer Steinkarte */
+.stein-bild {
+  display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover;
+  border-radius: 2px; margin: -.15rem 0 .7rem;
+  border: 1px solid var(--pergament-rand);
+  background: rgba(43, 33, 23, .06);
+}
