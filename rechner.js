@@ -28,17 +28,55 @@ function stand(lon) {
 function vz(n) { return (n > 0 ? '+' : '') + n; }
 function klasse(n) { return n > 0 ? 'plus' : (n < 0 ? 'minus' : ''); }
 
-/* ---------- Formular vorbereiten ---------- */
-var ortWahl = $('ort');
-Orte.ORTE.forEach(function (o, i) {
-  var opt = document.createElement('option');
-  opt.value = i; opt.textContent = o[0];
-  if (o[0] === 'München') opt.selected = true;
-  ortWahl.appendChild(opt);
-});
-var eigen = document.createElement('option');
-eigen.value = 'eigen'; eigen.textContent = '— Koordinaten selbst eingeben —';
-ortWahl.appendChild(eigen);
+/* ---------- Ortssuche ----------
+   Tippen statt scrollen: die Vorschlagsliste wird bei jedem Anschlag neu
+   gefuellt, immer nur mit den besten Treffern. Bei 25.894 Orten waere eine
+   vollstaendig gefuellte Liste sonst nicht zu bedienen. */
+var ortFeld = $('ortSuche'), ortListe = $('orteListe'), ortMeldung = $('ortHinweis');
+var gewaehlterOrt = Orte.finde('München');
+var ortOffen = false;                       /* getippter Ort passt zu keinem Eintrag */
+
+function ortVorschlaege() {
+  var treffer = Orte.suche(ortFeld.value, 25);
+  ortListe.innerHTML = treffer.map(function (o) {
+    return '<option value="' + o.anzeige.replace(/"/g, '&quot;') + '"></option>';
+  }).join('');
+}
+function ortMelden(t, warnung) {
+  ortMeldung.textContent = t || '';
+  ortMeldung.style.color = warnung ? 'var(--rubrik)' : '';
+}
+function ortGetippt() {
+  ortVorschlaege();
+  var eingabe = ortFeld.value.trim();
+  if (!eingabe) { ortOffen = false; gewaehlterOrt = null; ortMelden(''); return; }
+  var t = Orte.finde(eingabe);
+  if (!t) {
+    var passend = Orte.suche(eingabe, 6);
+    /* Eine eindeutige Vervollstaendigung wird uebernommen, mehrere nicht */
+    var genau = passend.filter(function (o) {
+      return o.name.toLowerCase() === eingabe.toLowerCase(); });
+    if (genau.length === 1) t = genau[0];
+    else if (passend.length === 1) t = passend[0];
+    else if (passend.length > 1) {
+      ortOffen = true; gewaehlterOrt = null;
+      ortMelden(passend.length + '+ Orte passen — weiter tippen oder aus der Liste wählen.');
+      return;
+    }
+  }
+  if (!t) {
+    ortOffen = true; gewaehlterOrt = null;
+    ortMelden('Ort nicht gefunden — setze das Häkchen und trage die Koordinaten ein.', true);
+    return;
+  }
+  ortOffen = false; gewaehlterOrt = t;
+  $('breite').value = t.lat; $('laenge').value = t.lon;
+  ortMelden('');
+  zonenHinweis();
+}
+ortFeld.addEventListener('input', ortGetippt);
+ortFeld.addEventListener('change', ortGetippt);
+ortVorschlaege();
 
 var zonenWahl = $('zone');
 for (var z = -12; z <= 14; z += 0.5) {
@@ -61,13 +99,16 @@ var BAENDER = {
 function zeitUnbekannt() { return $('zeitUnbekannt').checked; }
 function band() { return BAENDER[$('tageszeit').value]; }
 
-function eigenModus() { return ortWahl.value === 'eigen'; }
+function eigenModus() { return $('eigeneKoord').checked; }
 function ortWechsel() {
   var e = eigenModus();
   ['feldBreite','feldLaenge','feldZone'].forEach(function (id) { $(id).hidden = !e; });
+  ortFeld.disabled = e;
+  ortFeld.style.opacity = e ? .45 : 1;
+  if (e) ortMelden('');
   zonenHinweis();
 }
-ortWahl.addEventListener('change', ortWechsel);
+$('eigeneKoord').addEventListener('change', ortWechsel);
 
 function zeitWechsel() {
   var u = zeitUnbekannt();
@@ -125,8 +166,9 @@ function daten() {
     b.versatz = parseFloat($('zone').value);
     b.ortName = 'eigene Koordinaten';
   } else {
-    var o = Orte.ORTE[+ortWahl.value];
-    b.lat = o[1]; b.lon = o[2]; b.tz = o[3]; b.ortName = o[0];
+    if (!gewaehlterOrt) return null;
+    b.lat = gewaehlterOrt.lat; b.lon = gewaehlterOrt.lon;
+    b.tz = gewaehlterOrt.tz; b.ortName = gewaehlterOrt.anzeige;
   }
   return b;
 }
@@ -325,21 +367,36 @@ function farbeVon(n) {
 /* ============================================================
    Tabellen, Rangliste, Empfehlungen
    ============================================================ */
+/* Die Skala liegt symmetrisch um die Null: Minuspunkte gehen nach links,
+   Pluspunkte nach rechts, die Nulllinie steht fest in der Mitte. Sonst laesst
+   sich am Balken nicht ablesen, ob ein Wert positiv oder negativ ist. */
 function rangliste(urteil) {
-  var werte = urteil.ranked.map(function (n) { return urteil.planets[n].total; });
-  var min = Math.min.apply(null, werte.concat([0])), max = Math.max.apply(null, werte.concat([0]));
-  var spanne = Math.max(max - min, 1);
-  $('rangliste').innerHTML = urteil.ranked.map(function (n) {
-    var u = urteil.planets[n], farbe = farbeVon(n);
-    var links = (0 - min) / spanne * 100, breite = Math.abs(u.total) / spanne * 100;
-    var start = u.total >= 0 ? links : links - breite;
-    return '<div class="rang">' +
-      '<span class="rang-glyph" style="color:' + farbe + '">' + PL[n].g + '</span>' +
-      '<span class="rang-name">' + n + '</span>' +
-      '<span class="rang-balken"><i style="left:' + start + '%;width:' + breite +
-        '%;background:' + farbe + '"></i></span>' +
-      '<span class="rang-wert ' + klasse(u.total) + '">' + vz(u.total) + '</span></div>';
-  }).join('');
+  var werte = urteil.ranked.map(function (n) { return Math.abs(urteil.planets[n].total); });
+  var reich = Math.max(Math.max.apply(null, werte.concat([0])), 5);
+  var stufe = reich <= 10 ? 5 : 10;
+  var marken = [];
+  for (var m = -Math.floor(reich / stufe) * stufe; m <= reich; m += stufe) {
+    if (m === 0) continue;
+    marken.push('<i class="teil" style="left:' + (50 + m / reich * 50) + '%"></i>');
+  }
+  var achse = marken.join('') + '<i class="null"></i>';
+
+  $('rangliste').innerHTML =
+    '<div class="rang-skala"><span>−' + reich + '</span><span>0</span><span>+' + reich + '</span></div>' +
+    urteil.ranked.map(function (n) {
+      var u = urteil.planets[n], farbe = farbeVon(n);
+      var breite = Math.abs(u.total) / reich * 50;
+      var start = u.total >= 0 ? 50 : 50 - breite;
+      var balken = u.total === 0
+        ? '<i class="punkt" style="left:50%;background:' + farbe + '"></i>'
+        : '<i style="left:' + start + '%;width:' + breite + '%;background:' + farbe +
+          ';border-radius:' + (u.total < 0 ? '5px 0 0 5px' : '0 5px 5px 0') + '"></i>';
+      return '<div class="rang">' +
+        '<span class="rang-glyph" style="color:' + farbe + '">' + PL[n].g + '</span>' +
+        '<span class="rang-name">' + n + '</span>' +
+        '<span class="rang-balken">' + achse + balken + '</span>' +
+        '<span class="rang-wert ' + klasse(u.total) + '">' + vz(u.total) + '</span></div>';
+    }).join('');
 }
 
 function standTabelle(ch, urteil, ohneHaeuser) {
@@ -466,6 +523,160 @@ function vorbehalteZeigen(b, pruef, urteil) {
   kasten.innerHTML = t.join('');
   kasten.hidden = false;
 }
+
+/* Stilblatt der Druckansicht — bewusst hell, das spart Farbe */
+var DRUCK_STIL = [
+'@page { size:A4 portrait; margin:14mm; }',
+'* { box-sizing:border-box; }',
+'body { margin:0; font-family:"Cormorant Garamond",Georgia,serif; font-size:10.5pt;',
+'  line-height:1.5; color:#2b2117; background:#fff; }',
+'h1 { font-family:"Cinzel",serif; font-size:20pt; font-weight:600; margin:.1em 0 .15em;',
+'  letter-spacing:.03em; }',
+'h2 { font-family:"Cinzel",serif; font-size:11pt; font-weight:600; letter-spacing:.1em;',
+'  text-transform:uppercase; color:#8f2c21; margin:0 0 .6em; }',
+'header { border-bottom:1.5px solid #a8801f; padding-bottom:.5em; margin-bottom:1em; }',
+'.marke { font-family:"Cinzel",serif; font-size:7pt; letter-spacing:.22em;',
+'  text-transform:uppercase; color:#6d5e47; margin:0; }',
+'.daten { font-family:"Cinzel",serif; font-size:7.5pt; letter-spacing:.14em;',
+'  text-transform:uppercase; color:#6d5e47; margin:0; }',
+'section { margin-bottom:1.1em; }',
+'.oben { display:flex; gap:6mm; align-items:flex-start; }',
+'.radix { flex:0 0 52%; }',
+'.staerke { flex:1; padding-top:.2em; }',
+'.skala { display:flex; justify-content:space-between; font-family:"Cinzel",serif;',
+'  font-size:6pt; letter-spacing:.1em; color:#6d5e47; margin:0 0 .3em 7.2em; padding-right:3.4em; }',
+'.dz { display:flex; align-items:center; gap:.4em; padding:.2em 0;',
+'  border-bottom:.5px solid rgba(43,33,23,.14); }',
+'.dg { width:1.4em; text-align:center; font-size:12pt;',
+'  font-family:"Apple Symbols","Segoe UI Symbol",serif; }',
+'.dn { width:5.4em; font-family:"Cinzel",serif; font-size:6.8pt; letter-spacing:.1em;',
+'  text-transform:uppercase; }',
+'.db { flex:1; position:relative; height:10px; border-radius:2px;',
+'  background:linear-gradient(90deg,rgba(143,44,33,.12) 0 50%,rgba(63,107,69,.12) 50% 100%); }',
+'.db i { position:absolute; top:0; bottom:0; }',
+'.dnull { left:50%; width:1px; margin-left:-.5px; background:rgba(43,33,23,.6); }',
+'.dpunkt { left:50%; width:4px; height:4px; top:3px; margin-left:-2px; border-radius:50%; }',
+'.dw { width:3em; text-align:right; font-weight:600; font-size:9.5pt;',
+'  font-variant-numeric:tabular-nums; }',
+'.dpl { border-left:2px solid; padding:.15em 0 .5em .7em; margin-bottom:.8em;',
+'  break-inside:avoid; page-break-inside:avoid; }',
+'.dplk { display:flex; align-items:baseline; gap:.5em; flex-wrap:wrap; margin-bottom:.2em; }',
+'.dplk b { font-family:"Cinzel",serif; font-size:11pt; letter-spacing:.08em; }',
+'.dstand { font-size:9pt; color:#6d5e47; }',
+'.durteil { font-family:"Cinzel",serif; font-size:6.5pt; letter-spacing:.14em;',
+'  text-transform:uppercase; color:#8f2c21; border:.5px solid #8f2c21;',
+'  border-radius:2px; padding:.1em .5em; }',
+'.dmangel { margin:.1em 0 .5em; font-size:9.5pt; max-width:48em; }',
+'.dstg { display:grid; grid-template-columns:repeat(3,1fr); gap:.4em .7em; }',
+'.dst { border:.5px solid #d9c8a4; border-radius:2px; padding:.35em .5em;',
+'  display:flex; flex-direction:column; gap:.05em; }',
+'.dst b { font-family:"Cinzel",serif; font-size:8pt; letter-spacing:.05em; }',
+'.dst span { font-size:8pt; color:#6d5e47; }',
+'footer { border-top:.5px solid #d9c8a4; padding-top:.5em; margin-top:1em;',
+'  font-size:7.5pt; color:#6d5e47; }',
+'.drucken { text-align:right; margin-bottom:.8em; }',
+'.drucken button { font-family:"Cinzel",serif; font-size:8pt; letter-spacing:.16em;',
+'  text-transform:uppercase; background:#8f2c21; color:#f3ead6; border:none;',
+'  border-radius:2px; padding:.6em 1.4em; cursor:pointer; }',
+'@media print { .drucken { display:none; } }'
+].join('\n');
+
+/* ============================================================
+   Klappknoepfe
+   ============================================================ */
+function klappen(knopf, inhalt) {
+  $(knopf).addEventListener('click', function () {
+    var offen = $(inhalt).hidden;
+    $(inhalt).hidden = !offen;
+    this.setAttribute('aria-expanded', String(offen));
+  });
+}
+klappen('btnStaende', 'staendeInhalt');
+klappen('btnDetails', 'details');
+
+/* ============================================================
+   Druckansicht — Radix, Stärke der Planeten, empfohlene Steine
+   ============================================================ */
+function druckansicht() {
+  if (!letztes) return;
+  var ch = letztes.ch, urteil = letztes.urteil, b = letztes.b, ohneH = letztes.ohneHaeuser;
+  var nm = $('name').value.trim();
+
+  /* Das Radix wird so uebernommen, wie es auf der Seite steht */
+  var svg = $('radix').cloneNode(true);
+  svg.removeAttribute('id');
+  svg.setAttribute('style', 'width:100%;height:auto');
+
+  var kopfzeile = String(b.day).padStart(2, '0') + '.' + String(b.month).padStart(2, '0') +
+    '.' + b.year + (ohneH ? ' · ' + b.band.text
+      : ' um ' + String(b.hour).padStart(2, '0') + ':' + String(b.minute).padStart(2, '0')) +
+    ' · ' + b.ortName + ' · ' + (ch.isDay ? 'Tagesgeburt' : 'Nachtgeburt');
+
+  /* Staerkeleiste, mit denselben Verhaeltnissen wie auf der Seite */
+  var werte = urteil.ranked.map(function (n) { return Math.abs(urteil.planets[n].total); });
+  var reich = Math.max(Math.max.apply(null, werte.concat([0])), 5);
+  var leiste = urteil.ranked.map(function (n) {
+    var u = urteil.planets[n], f = farbeVon(n);
+    var breite = Math.abs(u.total) / reich * 50, start = u.total >= 0 ? 50 : 50 - breite;
+    return '<div class="dz"><span class="dg" style="color:' + f + '">' + PL[n].g + '</span>' +
+      '<span class="dn">' + n + '</span><span class="db">' +
+      '<i class="dnull"></i>' +
+      (u.total === 0 ? '<i class="dpunkt" style="background:' + f + '"></i>'
+        : '<i style="left:' + start + '%;width:' + breite + '%;background:' + f + '"></i>') +
+      '</span><span class="dw" style="color:' + (u.total < 0 ? '#8f2c21' : '#3f6b45') + '">' +
+      vz(u.total) + '</span></div>';
+  }).join('');
+
+  /* Empfohlene Steine der schwaechsten Planeten */
+  var drei = Steine.empfehlung(urteil, 3);
+  var schwach = drei.filter(function (e) { return e.urteil.total < 5; });
+  var ziel = schwach.length ? schwach : drei.slice(0, 1);
+  var steine = ziel.map(function (e) {
+    var f = farbeVon(e.planet), l = e.lapidarium;
+    var karten = l.steine.filter(function (st) { return st.bezug !== 'nicht erhältlich'; })
+      .map(function (st) {
+        return '<div class="dst"><b>' + (st.haupt ? '✦ ' : '') + st.name + '</b>' +
+          '<span>' + st.modern + '</span>' +
+          '<span>' + st.bezug + ' · ' + st.preis + '</span></div>';
+      }).join('');
+    return '<div class="dpl" style="border-color:' + f + '">' +
+      '<div class="dplk"><span style="color:' + f + ';font-size:20pt">' + l.glyph + '</span>' +
+      '<b style="color:' + f + '">' + e.planet + '</b>' +
+      '<span class="dstand">' + grad(e.urteil.degInSign) + ' ' + e.urteil.glyph + ' ' +
+      e.urteil.signName + (ohneH ? '' : ' · Haus ' + e.urteil.house) + '</span>' +
+      '<span class="durteil">' + e.urteil.verdict.label + ' · ' + vz(e.urteil.total) + '</span></div>' +
+      '<p class="dmangel">' + l.mangel + '</p>' +
+      '<div class="dstg">' + karten + '</div></div>';
+  }).join('');
+
+  var heute = new Date();
+  var html = '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">' +
+    '<title>Venusstein — ' + (nm || 'Nativität') + '</title>' +
+    '<link rel="preconnect" href="https://fonts.googleapis.com">' +
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&' +
+    'family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">' +
+    '<style>' + DRUCK_STIL + '</style></head><body>' +
+    '<div class="drucken"><button onclick="window.print()">Drucken oder als PDF sichern</button></div>' +
+    '<header><p class="marke">Venusstein — ein astrologisches Lapidarium</p>' +
+    '<h1>' + (nm || 'Nativität') + '</h1><p class="daten">' + kopfzeile + '</p></header>' +
+    '<section class="oben"><div class="radix">' + svg.outerHTML + '</div>' +
+    '<div class="staerke"><h2>Stärke der Planeten</h2>' +
+    '<p class="skala"><span>−' + reich + '</span><span>0</span><span>+' + reich + '</span></p>' +
+    leiste + '</div></section>' +
+    '<section><h2>Die Steine, die fehlen</h2>' + steine + '</section>' +
+    '<footer>Gerechnet nach William Lilly, <i>Christian Astrology</i> (1647), mit ' +
+    'ägyptischen Termini und Ganzzeichenhäusern. Steine nach Agrippa von Nettesheim, ' +
+    '<i>De occulta philosophia</i> (1533). · Erstellt am ' +
+    String(heute.getDate()).padStart(2, '0') + '.' +
+    String(heute.getMonth() + 1).padStart(2, '0') + '.' + heute.getFullYear() +
+    ' · abuelia81.github.io/venusstein</footer></body></html>';
+
+  var w = window.open('', '_blank');
+  if (!w) { alert('Der Browser hat das Fenster blockiert. Bitte Pop-ups für diese Seite erlauben.'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+}
+$('btnDruck').addEventListener('click', druckansicht);
 
 /* ============================================================
    Ablauf

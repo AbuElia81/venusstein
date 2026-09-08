@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="stil.css?v=8">
+<link rel="stylesheet" href="stil.css?v=10">
 <style>
   /* ---------- Radix ---------- */
   .radix-huelle { display:grid; gap:1.8rem; grid-template-columns:minmax(0,1fr); align-items:start; }
@@ -29,8 +29,19 @@
   }
   .rang-glyph { font-size:1.5rem; width:1.5em; text-align:center; flex:none; }
   .rang-name { font-family:var(--caps); font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; flex:none; width:6.2em; }
-  .rang-balken { flex:1; height:9px; background:rgba(43,33,23,.09); border-radius:5px; position:relative; overflow:hidden; }
-  .rang-balken i { position:absolute; top:0; bottom:0; border-radius:5px; }
+  .rang-balken {
+    flex:1; height:13px; border-radius:2px; position:relative; overflow:hidden;
+    background:linear-gradient(90deg, rgba(143,44,33,.10) 0 50%, rgba(63,107,69,.10) 50% 100%);
+  }
+  .rang-balken i { position:absolute; top:0; bottom:0; }
+  .rang-balken i.null { left:50%; width:1.5px; margin-left:-.75px; background:rgba(43,33,23,.55); }
+  .rang-balken i.teil { width:1px; background:rgba(43,33,23,.16); }
+  .rang-balken i.punkt { width:5px; height:5px; top:50%; margin:-2.5px 0 0 -2.5px; border-radius:50%; }
+  .rang-skala {
+    display:flex; justify-content:space-between; font-family:var(--caps); font-size:.58rem;
+    letter-spacing:.12em; color:var(--tinte-blass); opacity:.7;
+    margin:0 0 .35rem calc(1.5em + 6.2em + 1.5rem); padding-right:4.2em;
+  }
   .rang-wert { font-variant-numeric:tabular-nums; width:3.2em; text-align:right; flex:none; font-weight:600; }
 
   /* ---------- Planetenabschnitt ---------- */
@@ -68,12 +79,25 @@
   }
   .merk p { margin:0 0 .45rem; } .merk p:last-child { margin:0; }
   .merk strong { color:var(--rubrik); }
+  .klapper {
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; width:100%;
+    background:transparent; border:1px solid var(--pergament-rand); border-radius:2px;
+    padding:.7rem .95rem; cursor:pointer; color:var(--tinte); text-align:left;
+    font-family:var(--caps); font-size:.74rem; letter-spacing:.16em; text-transform:uppercase;
+    transition:border-color .18s, color .18s;
+  }
+  .klapper:hover { border-color:var(--rubrik); color:var(--rubrik); }
+  .klapper .pfeil { transition:transform .2s; font-size:.9rem; }
+  .klapper[aria-expanded="true"] .pfeil { transform:rotate(180deg); }
+  .klapper[aria-expanded="true"] { border-color:var(--rubrik); color:var(--rubrik); }
+  .klapper.gross { font-size:clamp(.8rem,1.6vw,.95rem); padding:.95rem 1.15rem; }
+  .klapp-inhalt { margin-top:1rem; }
   .fehler { color:var(--rubrik); font-weight:600; }
   #ergebnis[hidden]{ display:none; }
 </style>
 </head>
 <body>
-<script src="kopf.js?v=8"></script>
+<script src="kopf.js?v=10"></script>
 
 <main>
   <section class="bahn">
@@ -113,8 +137,15 @@
           </select>
         </div>
         <div class="feld voll">
-          <label for="ort">Geburtsort</label>
-          <select id="ort"></select>
+          <label for="ortSuche">Geburtsort</label>
+          <input type="text" id="ortSuche" list="orteListe" autocomplete="off"
+                 placeholder="Ort eintippen" value="München">
+          <datalist id="orteListe"></datalist>
+          <p class="hinweis" id="ortHinweis" style="margin:.15rem 0 0"></p>
+          <div class="schalter">
+            <input type="checkbox" id="eigeneKoord">
+            <label for="eigeneKoord">Ort nicht dabei — Koordinaten selbst eintragen</label>
+          </div>
         </div>
         <div class="feld" id="feldBreite" hidden>
           <label for="breite">Breite (Nord positiv)</label>
@@ -156,9 +187,17 @@
             <div id="rangliste"></div>
           </div>
           <div class="tafel" style="margin-top:1.2rem">
-            <h3 style="margin-bottom:.6rem">Stände</h3>
-            <div class="tabellenrahmen"><table id="standTabelle"></table></div>
+            <button type="button" class="klapper" id="btnStaende"
+                    aria-expanded="false" aria-controls="staendeInhalt">
+              <span>Planetenstände</span><span class="pfeil" aria-hidden="true">▾</span>
+            </button>
+            <div id="staendeInhalt" class="klapp-inhalt" hidden>
+              <div class="tabellenrahmen"><table id="standTabelle"></table></div>
+            </div>
           </div>
+          <p style="margin:1.2rem 0 0">
+            <button type="button" class="knopf leise" id="btnDruck">Zum Ausdrucken</button>
+          </p>
         </div>
       </div>
     </section>
@@ -171,16 +210,21 @@
     </section>
 
     <section class="bahn">
-      <h2>Alle sieben Planeten im Einzelnen</h2>
-      <div id="details"></div>
+      <button type="button" class="klapper gross" id="btnDetails"
+              aria-expanded="false" aria-controls="details">
+        <span>Alle sieben Planeten im Einzelnen</span><span class="pfeil" aria-hidden="true">▾</span>
+      </button>
+      <p class="hinweis" style="margin:.5rem 0 0">Die vollständige Aufschlüsselung
+      jeder einzelnen Würde — wesentliche wie zufällige.</p>
+      <div id="details" class="klapp-inhalt" hidden></div>
     </section>
   </div>
 </main>
 
-<script src="astro.js?v=8"></script>
-<script src="wuerden.js?v=8"></script>
-<script src="steine.js?v=8"></script>
-<script src="orte.js?v=8"></script>
-<script src="rechner.js?v=8"></script>
+<script src="astro.js?v=10"></script>
+<script src="wuerden.js?v=10"></script>
+<script src="steine.js?v=10"></script>
+<script src="orte.js?v=10"></script>
+<script src="rechner.js?v=10"></script>
 </body>
 </html>

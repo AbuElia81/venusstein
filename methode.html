@@ -3,32 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Methode und Quellen — Venusstein</title>
-<meta name="description" content="Welche Ephemeride, welche Häuser, welche Würdentafel — und wo die Grenzen der Rechnung liegen.">
+<title>Herkunft und Methode — Venusstein</title>
+<meta name="description" content="Die Gewährsleute hinter Venusstein — von Ptolemäus und Galen über al-Bīrūnī und Hildegard von Bingen bis Agrippa und Lilly — und wie hier gerechnet wird.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="stil.css?v=8">
+<link rel="stylesheet" href="stil.css?v=10">
 <style>
   .bahn-eng h2 { margin-top:2.6rem; }
   .bahn-eng h3 { margin-top:1.8rem; margin-bottom:.4rem; }
   .quelle { border-left:2px solid var(--gold); padding-left:1rem; margin:1.2rem 0; font-size:.95rem; }
   .quelle cite { font-style:normal; display:block; font-family:var(--caps);
     font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--tinte-blass); margin-top:.4rem; }
+
+  .gewaehr {
+    border-top:1px solid var(--pergament-rand); padding:1.3rem 0 .3rem;
+  }
+  .gw-kopf { display:flex; align-items:baseline; gap:.9rem; flex-wrap:wrap; }
+  .gewaehr h3 { margin:0; font-size:clamp(1.05rem,2vw,1.28rem); letter-spacing:.06em; }
+  .gw-marke {
+    font-family:var(--caps); font-size:.56rem; letter-spacing:.18em; text-transform:uppercase;
+    padding:.2rem .6rem; border-radius:2px; border:1px solid currentColor; white-space:nowrap;
+  }
+  .gw-marke.verwendet { color:var(--rubrik); background:rgba(143,44,33,.06); }
+  .gw-marke.hintergrund { color:var(--tinte-blass); }
+  .gw-ort { font-family:var(--caps); font-size:.62rem; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--tinte-blass); margin:.35rem 0 .1rem; }
+  .gw-werk { font-style:italic; color:var(--gold); margin:0 0 .5rem; font-size:1.02rem; }
+  .gw-text { margin:0 0 .5rem; }
+  .gw-rolle {
+    margin:0; font-size:.88rem; color:var(--tinte-blass);
+    border-left:2px solid var(--pergament-rand); padding-left:.7rem;
+  }
+
+  .klapper {
+    display:flex; align-items:center; justify-content:space-between; gap:1rem; width:100%;
+    background:transparent; border:1px solid var(--pergament-rand); border-radius:2px;
+    padding:.95rem 1.15rem; cursor:pointer; color:var(--tinte); text-align:left;
+    font-family:var(--caps); font-size:clamp(.8rem,1.6vw,.95rem); letter-spacing:.16em;
+    text-transform:uppercase; transition:border-color .18s, color .18s;
+  }
+  .klapper:hover, .klapper[aria-expanded="true"] { border-color:var(--rubrik); color:var(--rubrik); }
+  .klapper .pfeil { transition:transform .2s; font-size:.9rem; }
+  .klapper[aria-expanded="true"] .pfeil { transform:rotate(180deg); }
+  .klapp-inhalt { margin-top:1.2rem; }
 </style>
 </head>
 <body>
-<script src="kopf.js?v=8"></script>
+<script src="kopf.js?v=10"></script>
 
 <main>
   <section class="bahn bahn-eng">
-    <p class="klein-kapital">Methode</p>
-    <h1>Wie hier gerechnet wird</h1>
-    <p class="initiale">Astrologische Rechner geben selten preis, welchem System sie
-    folgen. Da die Systeme aber zu verschiedenen Ergebnissen führen, steht hier
-    offen, was gewählt wurde und warum — und wo die Rechnung an ihre Grenzen kommt.</p>
+    <p class="klein-kapital">Herkunft und Methode</p>
+    <h1>Auf wen sich das hier stützt</h1>
+    <p class="initiale">Nichts an dieser Seite ist ausgedacht. Die Zuordnung der Steine, die
+    Punktwerte der Würden, die Tafeln der Termini und Gesichter — alles steht in Büchern, die
+    zwischen dem ersten und dem siebzehnten Jahrhundert geschrieben wurden. Hier stehen die
+    Verfasser, in der Reihenfolge ihrer Zeit, mit dem was sie beigetragen haben — und mit der
+    Angabe, ob diese Seite ihnen unmittelbar folgt oder ob sie zum Hintergrund gehören.</p>
 
-    <h2>Die Ephemeride</h2>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Dorotheus von Sidon</h3><span class="gw-marke hintergrund">Hintergrund</span></div><p class="gw-ort">1. Jahrhundert · Sidon, Phönizien</p><p class="gw-werk">Carmen Astrologicum</p><p class="gw-text">Sein Lehrgedicht überlebte auf Umwegen — aus dem Griechischen ins Mittelpersische, von dort ins Arabische, und erst daraus zurück in europäische Sprachen. Von ihm stammt die Einteilung der Triplizitäten in drei Herrscher: einen für den Tag, einen für die Nacht, einen teilhabenden.</p><p class="gw-rolle">Diese Seite folgt der ptolemäischen Fassung mit zwei Herrschern, nicht seiner.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Claudius Ptolemäus</h3><span class="gw-marke verwendet">hier verwendet</span></div><p class="gw-ort">um 100 bis um 170 · Alexandria</p><p class="gw-werk">Tetrábiblos</p><p class="gw-text">Der Astronom, dessen Weltbild vierzehn Jahrhunderte hielt, schrieb auch das Buch, das die Astrologie zur geordneten Lehre machte. Er systematisierte, was verstreut überliefert war: Domizile, Erhöhungen, Triplizitäten, Termini, Gesichter — das Gerüst, auf dem alle späteren Würdentafeln stehen.</p><p class="gw-rolle">Seine Triplizitätsherrscher werden hier gerechnet.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Galen von Pergamon</h3><span class="gw-marke hintergrund">Hintergrund</span></div><p class="gw-ort">um 129 bis um 216 · Pergamon und Rom</p><p class="gw-werk">Über die Mischungen und über die Kräfte der einfachen Heilmittel</p><p class="gw-text">Der Leibarzt Marc Aurels ordnete alles Leibliche vier Säften und vier Qualitäten zu — warm und kalt, feucht und trocken. Das ist nicht bloß Medizingeschichte: Wenn ein mittelalterliches Lapidarium sagt, ein Stein sei „kühlend“ oder „trocknend“, spricht daraus Galen. Ohne ihn wären die Wirkungsangaben der Steinbücher nicht zu lesen.</p><p class="gw-rolle">Die Sprache, in der die Lapidarien ihre Wirkungen beschreiben.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Abū Maʿšar al-Balchī</h3><span class="gw-marke hintergrund">Hintergrund</span></div><p class="gw-ort">787 bis 886 · Balch und Bagdad</p><p class="gw-werk">Kitāb al-Mudchal al-kabīr — Große Einführung</p><p class="gw-text">Am Hof der Abbasiden sammelte er die griechische, persische und indische Überlieferung zu einem Werk. Über die lateinischen Übersetzungen des 12. Jahrhunderts kam die hellenistische Astrologie so nach Europa zurück — auf dem Umweg über Bagdad, in arabischem Gewand.</p><p class="gw-rolle">Der Weg, auf dem die Würdentafeln nach Europa kamen.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Abū Raiḥān al-Bīrūnī</h3><span class="gw-marke verwendet">hier verwendet</span></div><p class="gw-ort">973 bis 1048 · Chwaresmien</p><p class="gw-werk">Kitāb at-Tafhīm · Kitāb al-Dschamāhir</p><p class="gw-text">Der vielseitigste Gelehrte seiner Zeit — er berechnete den Erdumfang, verglich Kalender und beschrieb Indien. Zwei seiner Bücher berühren dieses Projekt unmittelbar: Das <em>Tafhīm</em> (1029) überliefert die ägyptischen Termini und die chaldäischen Gesichter in eben der Gestalt, die hier gerechnet wird. Und im <em>Dschamāhir</em> wog er Edelsteine aus und bestimmte ihre Dichte — mit einer Genauigkeit, an die erst das 19. Jahrhundert wieder heranreichte.</p><p class="gw-rolle">Seine Tafel der ägyptischen Termini liegt der Rechnung zugrunde.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Marbod von Rennes</h3><span class="gw-marke hintergrund">Hintergrund</span></div><p class="gw-ort">um 1035 bis 1123 · Angers und Rennes</p><p class="gw-werk">Liber lapidum</p><p class="gw-text">Ein Bischof schrieb um 1090 sechzig Steine in lateinische Hexameter — und traf damit den Ton des ganzen Mittelalters. Kaum ein Text wurde häufiger abgeschrieben, übersetzt und ausgeschrieben. Wenn hier steht, der Smaragd mehre den Reichtum oder der Diamant sei unbezwinglich, dann steht das so bei Marbod.</p><p class="gw-rolle">Quelle für die Wirkungen einzelner Steine im Lapidarium.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Abraham ibn Ezra</h3><span class="gw-marke hintergrund">Hintergrund</span></div><p class="gw-ort">um 1089 bis 1167 · Tudela, dann ganz Europa</p><p class="gw-werk">Reschit Chochma — Anfang der Weisheit</p><p class="gw-text">Dichter, Grammatiker, Bibelausleger und Astrologe, der nach 1140 rastlos zwischen Italien, Frankreich und England unterwegs war. Er schrieb auf Hebräisch, was er aus arabischen Quellen kannte; seine Bücher wurden ins Lateinische und Altfranzösische übertragen. Damit wurde er zu einem der wichtigsten Vermittler arabischer Astrologie ins christliche Europa.</p><p class="gw-rolle">Vermittler der Lehre, deren Tafeln hier gerechnet werden.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Hildegard von Bingen</h3><span class="gw-marke hintergrund">Hintergrund</span></div><p class="gw-ort">1098 bis 1179 · Rupertsberg am Rhein</p><p class="gw-werk">Physica, Buch IV: Von den Steinen</p><p class="gw-text">Die Äbtissin beschreibt rund sechsundzwanzig Steine, und sie tut es anders als alle anderen: Ihre Steine beziehen ihre Kraft aus Feuer und Wasser, nicht aus den Planeten. Astrologische Zuordnungen fehlen bei ihr ganz. Sie steht hier also nicht als Gewährsfrau für die Zuordnung, sondern als die eigenständigste Stimme der mittelalterlichen Steinkunde — und als Erinnerung daran, dass die Überlieferung nicht einstimmig ist.</p><p class="gw-rolle">Eigenständige Gegenstimme: Steinkunde ohne Planeten.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Alfons X. von Kastilien</h3><span class="gw-marke hintergrund">Hintergrund</span></div><p class="gw-ort">1221 bis 1284 · Toledo und Sevilla</p><p class="gw-werk">Lapidario</p><p class="gw-text">Der König ließ in seinem Skriptorium aus dem Arabischen übersetzen, was über Steine zu haben war. Herausgekommen ist das gründlichste astrologische Lapidarium überhaupt: dreihundertsechzig Steine, für jeden Grad des Tierkreises einer, mit über achthundert Miniaturen. Kein anderes Werk bindet Stein und Himmel so eng zusammen.</p><p class="gw-rolle">Das Vorbild für den Gedanken, Steine an Gradstellungen zu binden.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>Heinrich Cornelius Agrippa</h3><span class="gw-marke verwendet">hier verwendet</span></div><p class="gw-ort">1486 bis 1535 · Köln, Italien, Frankreich</p><p class="gw-werk">De occulta philosophia libri tres</p><p class="gw-text">Sein Hauptwerk von 1533 fasst zusammen, was die Renaissance über die verborgenen Zusammenhänge der Dinge zu wissen glaubte. Die Kapitel XXIII bis XXIX des ersten Buchs zählen für jeden Planeten auf, was ihm auf Erden zugehört — Metalle, Steine, Pflanzen, Tiere. Diese sieben Listen sind das Lapidarium dieser Seite, unverändert und vollständig.</p><p class="gw-rolle">Alle Steinzuordnungen stammen aus diesen sieben Kapiteln.</p></article>
+    <article class="gewaehr"><div class="gw-kopf"><h3>William Lilly</h3><span class="gw-marke verwendet">hier verwendet</span></div><p class="gw-ort">1602 bis 1681 · London</p><p class="gw-werk">Christian Astrology</p><p class="gw-text">Der bekannteste Astrologe des englischen Bürgerkriegs schrieb 1647 das erste große astrologische Lehrbuch in englischer Sprache. Auf Seite 115 steht die Tafel, die jeder Würde und jeder Schwäche eine Punktzahl gibt — die einzige vollständig durchgerechnete ihrer Art. Sie macht diesen Rechner überhaupt erst möglich.</p><p class="gw-rolle">Die Punktwerte für wesentliche und zufällige Würden.</p></article>
+
+    <hr class="regel">
+
+    <button type="button" class="klapper" id="btnRechnung"
+            aria-expanded="false" aria-controls="rechnung">
+      <span>Wie hier gerechnet wird</span><span class="pfeil" aria-hidden="true">▾</span>
+    </button>
+    <p class="hinweis" style="margin:.5rem 0 0">Ephemeride, Zeitzonen, Häuser, Würdentafeln und
+    das Verfahren bei unbekannter Geburtszeit — mit den Zahlen dahinter.</p>
+    <div id="rechnung" class="klapp-inhalt" hidden>
+    <h3>Die Ephemeride</h3>
     <p>Die Stände der sieben sichtbaren Planeten werden im Browser selbst gerechnet,
     ohne Anfrage an einen Dienst. Für Merkur bis Saturn dienen die Kepler-Elemente
     der JPL-Näherung für die Jahre 1800 bis 2050; sie werden heliozentrisch
@@ -44,7 +99,7 @@
     breit, Termini sechs bis acht, Gesichter zehn. Wer eine Position auf die
     Bogensekunde braucht, nimmt ein Ephemeridenwerk.</p>
 
-    <h2>Zeit und Ort</h2>
+    <h3>Zeit und Ort</h3>
     <p>Der Versatz zur Weltzeit wird nicht geschätzt, sondern für den Geburtstag aus
     der Zeitzonendatenbank des Browsers gelesen. Damit sind auch alte Regelungen
     richtig erfasst — etwa dass in Deutschland zwischen 1950 und 1980 keine
@@ -53,7 +108,7 @@
     wandert in vier Minuten um ein Grad. Die Zeichenstände der langsamen Planeten
     bleiben davon nahezu unberührt, die Häuser jedoch nicht.</p>
 
-    <h2 id="ohnezeit">Wenn die Geburtszeit fehlt</h2>
+    <h3 id="ohnezeit">Wenn die Geburtszeit fehlt</h3>
     <p>Die Uhrzeit lässt sich nicht raten. Der Aszendent wandert in vier Minuten um
     ein Grad und durchläuft im Tagesverlauf <strong>alle zwölf Zeichen</strong>; mit
     ihm wandern sämtliche Häuser. Da Lillys Haustafel allein bis zu zehn Punkte
@@ -112,7 +167,7 @@
     praktisch so belastbar wie mit genauer Zeit. Bei Merkur und Mond steht sie unter
     Vorbehalt — und der wird angezeigt.</p>
 
-    <h2>Die Häuser</h2>
+    <h3>Die Häuser</h3>
     <p>Gerechnet wird mit <strong>Ganzzeichenhäusern</strong>: Das Zeichen des
     Aszendenten ist das erste Haus, das folgende das zweite, und so fort. Das ist
     die älteste bezeugte Hausteilung, sie kommt ohne Rechenkunststücke aus und
@@ -121,7 +176,7 @@
     Ganzzeichenhäusern fällt es nicht notwendig auf die Spitze des zehnten Hauses —
     das ist kein Fehler, sondern Eigenart des Systems.</p>
 
-    <h2>Die Würden</h2>
+    <h3>Die Würden</h3>
     <p>Grundlage ist die Tafel <em>To examine the Strength and Debility of each
     Planet</em> aus William Lillys <em>Christian Astrology</em> (London 1647,
     S. 115). Zwei Stücke daraus wurden bewusst ersetzt, und zwar durchgängig:</p>
@@ -163,6 +218,7 @@
     in <em>sehr stark</em> ab +10, <em>stark</em> ab +5, <em>mittel</em> ab 0,
     <em>geschwächt</em> ab −5 und darunter <em>stark geschwächt</em> stammt nicht von
     Lilly, sondern ist eine Lesehilfe dieser Seite.</p>
+    </div>
 
     <h2>Die Steine</h2>
     <p>Die Zuordnung folgt Agrippa, Buch I, Kapitel XXIII bis XXIX, zitiert nach der
@@ -198,7 +254,32 @@
     sauber durch. Ob Steine wirken, ist damit nicht behauptet und nicht geprüft. Die
     Seite ersetzt keine ärztliche Behandlung und keine Beratung in rechtlichen oder
     finanziellen Dingen.</p>
+  
   </section>
 </main>
+
+<script>
+(function () {
+  var knopf = document.getElementById('btnRechnung'), inhalt = document.getElementById('rechnung');
+  function auf() { inhalt.hidden = false; knopf.setAttribute('aria-expanded', 'true'); }
+  knopf.addEventListener('click', function () {
+    var zu = inhalt.hidden;
+    inhalt.hidden = !zu;
+    knopf.setAttribute('aria-expanded', String(zu));
+  });
+  /* Verweise von aussen zeigen in den zugeklappten Teil hinein — dann aufklappen */
+  function hashPruefen() {
+    var h = location.hash.slice(1);
+    if (!h) return;
+    var ziel = document.getElementById(h);
+    if (ziel && inhalt.contains(ziel)) {
+      auf();
+      requestAnimationFrame(function () { ziel.scrollIntoView({ block: 'start' }); });
+    }
+  }
+  window.addEventListener('hashchange', hashPruefen);
+  hashPruefen();
+})();
+</script>
 </body>
 </html>
