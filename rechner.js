@@ -674,7 +674,7 @@ function druckansicht() {
     '<i>De occulta philosophia</i> (1533). · Erstellt am ' +
     String(heute.getDate()).padStart(2, '0') + '.' +
     String(heute.getMonth() + 1).padStart(2, '0') + '.' + heute.getFullYear() +
-    ' · abuelia81.github.io/venusstein</footer></body></html>';
+    ' · abuelia81.github.io/venusstein · github.com/AbuElia81/venusstein</footer></body></html>';
 
   var w = window.open('', '_blank');
   if (!w) { alert('Der Browser hat das Fenster blockiert. Bitte Pop-ups für diese Seite erlauben.'); return; }

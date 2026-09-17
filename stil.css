@@ -187,3 +187,16 @@ td.zahl { text-align: right; font-variant-numeric: tabular-nums; white-space: no
   border: 1px solid var(--pergament-rand);
   background: rgba(43, 33, 23, .06);
 }
+
+/* Verweis auf das Repository — auf dem Handy groß genug zum Antippen */
+.quellcode {
+  display: inline-flex; align-items: center; gap: .55rem;
+  min-height: 44px; padding: .45rem .95rem .45rem .75rem;
+  border: 1px solid var(--pergament-rand); border-radius: 3px;
+  background: rgba(255, 253, 247, .6);
+  color: var(--tinte); text-decoration: none;
+  font-family: var(--caps); font-size: .68rem; letter-spacing: .15em; text-transform: uppercase;
+  transition: border-color .18s, color .18s, background .18s;
+}
+.quellcode svg { width: 1.15em; height: 1.15em; flex: none; }
+.quellcode:hover { border-color: var(--rubrik); color: var(--rubrik); background: rgba(255, 253, 247, .9); }
